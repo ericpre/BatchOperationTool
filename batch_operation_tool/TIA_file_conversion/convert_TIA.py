@@ -19,7 +19,7 @@ class ConvertTIA:
         self.overwrite = overwrite
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
-        self.normalise = normalise
+        self.normalisation = normalise
 
     def set_fname(self, fname):
         self.fname = fname
@@ -34,7 +34,6 @@ class ConvertTIA:
     def convert_tia(self):
         if isinstance(self.s, list):
             for item in self.s:
-                print item
                 self._convert_tia_single_item(item)
         else:
             self._convert_tia_single_item(self.s)
@@ -62,14 +61,16 @@ class ConvertTIA:
             if self.overwrite:
                 self._save_data(item, overwrite=self.overwrite)   
             elif os.path.exists(self.fname_ext) and not self.overwrite:
-                self._ask_confirmation_overwrite()
+                self._ask_confirmation_overwrite(item)
             else:
-                self._save_data(item)
+                #don't understand why overwrite need to be True if the file doesn't exist
+                self._save_data(item, overwrite=True)
                     
             for extension in self.extension_list:
                 self.fname_ext = '.'.join([os.path.splitext(self.fname)[0], extension])
 
     def _ask_confirmation_overwrite(self, item):
+        # Add a button to ask "Yes to all", "No to all"
         path = os.path.split(self.fname_ext)[0]
         fname = os.path.split(self.fname_ext)[1]
         question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?"%(fname, path)

@@ -39,6 +39,21 @@ class test_ConvertTIA:
         self.tia_reader.set_fname(fname)
         assert self.tia_reader.fname == fname
 
+    def test_convert_tia_single_item(self):
+        self.tia_reader.contrast_streching = True
+        data = np.arange(100).reshape((10,10)).astype("float")
+        self.tia_reader._convert_tia_single_item(hs.signals.Image(data))
+        assert os.path.exists(self.tia_reader.fname_ext)
+        os.remove(self.tia_reader.fname_ext)
+
+        self.tia_reader.contrast_streching = False
+        data = np.arange(100).reshape((10,10)).astype("float")
+        self.tia_reader._convert_tia_single_item(hs.signals.Image(data))
+        assert os.path.exists(self.tia_reader.fname_ext)
+        a = hs.load(self.tia_reader.fname_ext)
+        a.data = data
+        os.remove(self.tia_reader.fname_ext)
+
     def test_convert_tia_overwrite(self):
         self.tia_reader.overwrite = True
         self.tia_reader.read(self._get_absolute_path(self.tia_reader.fname))

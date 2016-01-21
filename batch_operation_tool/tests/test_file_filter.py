@@ -76,6 +76,18 @@ class test_Filter():
         self.ff._get_conditional_files_list(self.fl, 'path')
         assert self.ff.files_to_use_list == []
         assert self.ff.files_to_ignore_list == [p.join('path', l) for l in self.fl]
+
+    def test_get_conditional_files_list_string(self):
+        self.ff.string_list = self.ff._set_list(['fname'])
+        self.ff._get_conditional_files_list(self.fl, '')
+        assert self.ff.files_to_use_list == self._convert_file_list(['fname0.ext', 'fname1.ext', 'fname2.ext2', 'fname3.abc'])
+        assert self.ff.files_to_ignore_list == self._convert_file_list([])
+
+    def test_get_conditional_files_list_string2(self):
+        self.ff.string_list = self.ff._set_list(['file'])
+        self.ff._get_conditional_files_list(self.fl, '')
+        assert self.ff.files_to_use_list == self._convert_file_list([])
+        assert self.ff.files_to_ignore_list == self._convert_file_list(['fname0.ext', 'fname1.ext', 'fname2.ext2', 'fname3.abc'])
     
     def test_get_files_lists(self):
         # Create files
@@ -125,9 +137,10 @@ class test_Filter():
     def test_pass_string_in_fname_condition(self):
         self.ff.string_list = self.ff._set_list(['file'])
         assert self.ff._pass_string_in_fname_condition('filename') == True
-
-        self.ff.string_list = self.ff._set_list(['file'])
+        assert self.ff._pass_string_in_fname_condition('0.0.0 file name') == True
+        assert self.ff._pass_string_in_fname_condition('0.0.0 file name.emi') == True
         assert self.ff._pass_string_in_fname_condition('abc') == False
+        assert self.ff._pass_string_in_fname_condition('abc.emi') == False
 
     def test_pass_ignore_string_in_fname_condition(self):
         self.ff.ignore_string_bool = True

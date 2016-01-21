@@ -78,9 +78,8 @@ class FileFilter():
     def _pass_string_in_fname_condition(self, fname):
         """ return True for file going to files_to_use_list, when:
             - string from string_list IS in filename """
-        filename, ext = os.path.splitext(fname)
         for string in self.string_list:
-            if string in filename:
+            if string in fname:
                 return True
             else:
                 return False
