@@ -34,9 +34,11 @@ class ConvertTIA:
     def convert_tia(self):
         if isinstance(self.s, list):
             for item in self.s:
-                self._convert_tia_single_item(item)
+                if self._convert_tia_single_item(item) == 'NoToAll':
+                    return 'NoToAll'
         else:
-            self._convert_tia_single_item(self.s)
+            if self._convert_tia_single_item(self.s)  == 'NoToAll':
+                return 'NoToAll'
         
     def _convert_tia_single_item(self, item):
         """ An attempt to add the scale in tif file to be read in ImageJ: not working... 
@@ -61,26 +63,41 @@ class ConvertTIA:
             if self.overwrite:
                 self._save_data(item, overwrite=self.overwrite)   
             elif os.path.exists(self.fname_ext) and not self.overwrite:
-                self._ask_confirmation_overwrite(item)
+                write_answer = self._ask_confirmation_overwrite(item)
+                if write_answer == 'NoToAll':
+                    return 'NoToAll'
+                elif write_answer == False:
+                    pass
+                else:
+                    self._save_data(item, overwrite=True)
             else:
                 #don't understand why overwrite need to be True if the file doesn't exist
                 self._save_data(item, overwrite=True)
-                    
-            for extension in self.extension_list:
-                self.fname_ext = '.'.join([os.path.splitext(self.fname)[0], extension])
+
+    def _questionBox(self, fname, path):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle("Overwriting File?")
+        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?"%(fname, path)
+        msgBox.setText(question)
+        msgBox.addButton(QtGui.QMessageBox.Yes)
+        msgBox.addButton(QtGui.QMessageBox.YesToAll)
+        msgBox.addButton(QtGui.QMessageBox.No)
+        msgBox.addButton(QtGui.QMessageBox.NoToAll)
+        return msgBox.exec_()     
 
     def _ask_confirmation_overwrite(self, item):
         # Add a button to ask "Yes to all", "No to all"
         path = os.path.split(self.fname_ext)[0]
         fname = os.path.split(self.fname_ext)[1]
-        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?"%(fname, path)
-        questionBox = QtGui.QMessageBox.question(None, 'Overwriting File?',
-                                                 question, QtGui.QMessageBox.Yes,
-                                                 QtGui.QMessageBox.No)
-        if questionBox == QtGui.QMessageBox.Yes:
-            self._save_data(item, overwrite=True)
+        questionBox = self._questionBox(fname, path)
+        if questionBox == QtGui.QMessageBox.Yes or questionBox == QtGui.QMessageBox.YesToAll:
+            if questionBox == QtGui.QMessageBox.YesToAll:
+                self.overwrite = True
             return True
-        return False
+        elif questionBox == QtGui.QMessageBox.NoToAll:
+            return "NoToAll"
+        else:
+            return False
 
     def _save_data(self, item, overwrite=False):
         item.save(self.fname_ext, overwrite=overwrite)

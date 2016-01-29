@@ -81,4 +81,6 @@ class TIAConversionWidget(QtGui.QWidget):
         convert_tia = ConvertTIA(**self.get_parameters())
         for fname in files_list:
             convert_tia.read(fname)
-            convert_tia.convert_tia()
+            result = convert_tia.convert_tia()
+            if result == 'NoToAll':
+                break

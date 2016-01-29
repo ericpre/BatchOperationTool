@@ -101,24 +101,6 @@ class FileFilter():
             - string from ignore_string_path_list IS NOT in path """
         return self._pass_ignore_condition(self.ignore_string_path_bool, path,
                                            self.ignore_string_path_list)
-#
-#    def _pass_ignore_if_same_file_with_extension_condition(self, path, fname):
-#        """ return True for file going to files_to_use_list, when:
-#            - ignore_filename_extension_bool is False
-#            OR
-#            - ignore_filename_extension_bool is True
-#            - fname+ext with ext from ignore_filename_extension_list DOES exist """
-#        if self.ignore_filename_extension_bool:
-#            for ext in self.ignore_filename_extension_list:
-#                print ext
-#                if os.path.exists(os.path.join(path, '.'.join([fname, ext]))):
-#                    print 'consider', fname, ext, "because %s.%s exists"%(fname, ext)
-#                    return True
-#                else:
-#                    print 'ignore', fname, ext, "because %s.%s doesn't exist"%(fname, ext)
-#                    return False
-#        else:
-#            return True
 
     def _pass_ignore_if_same_file_with_extension_condition(self, path, fname):
         """ return True for file going to files_to_use_list, when:
@@ -128,12 +110,9 @@ class FileFilter():
             - fname+ext with ext from ignore_filename_extension_list DOES exist """
         if self.ignore_filename_extension_bool:
             for ext in self.ignore_filename_extension_list:
-                print ext
                 if os.path.exists(os.path.join(path, '.'.join([fname, ext]))):
-                    print 'consider', fname, ext, "because %s.%s exists"%(fname, ext)
                     return True
                 else:
-                    print 'ignore', fname, ext, "because %s.%s doesn't exist"%(fname, ext)
                     pass
         else:
             return True
