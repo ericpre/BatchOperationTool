@@ -80,3 +80,4 @@ class TIAConversionTab(BaseTab):
         
     def _convert(self):
         self.tia_conversion_widget.convert_file()
+        self.refresh_table()

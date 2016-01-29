@@ -55,3 +55,4 @@ class DeleteTab(BaseTab):
 #        buttonBox.show()
         files_list = self.get_files_lists()[0]      
         delete_files_list_function(files_list)
+        self.refresh_table()

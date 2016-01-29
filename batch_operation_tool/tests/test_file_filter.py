@@ -213,7 +213,35 @@ class test_Filter():
         fl = self._convert_file_list(['fname.ext', 'fname.ext2'])
         create_files(fl)
         assert self.ff._pass_ignore_if_same_file_with_extension_condition(path, p.join(path, 'fname')) == True
-        remove_files(fl)        
+        remove_files(fl)  
+
+        self.ff.ignore_filename_extension_bool = True
+        self.ff.ignore_filename_extension_list = self.ff._set_list(['ext_to_ignore1', 'ext_to_ignore2'])
+        fl = self._convert_file_list(['fname.ext', 'fname.ext2'])
+        create_files(fl)
+        assert self.ff._pass_ignore_if_same_file_with_extension_condition(path, p.join(path, 'fname')) == False
+        remove_files(fl)   
+
+        self.ff.ignore_filename_extension_bool = True
+        self.ff.ignore_filename_extension_list = self.ff._set_list(['ext_to_ignore1', 'ext_to_ignore2'])
+        fl = self._convert_file_list(['fname.ext', 'fname.ext_to_ignore1'])
+        create_files(fl)
+        assert self.ff._pass_ignore_if_same_file_with_extension_condition(path, p.join(path, 'fname')) == True
+        remove_files(fl)
+        
+        self.ff.ignore_filename_extension_bool = True
+        self.ff.ignore_filename_extension_list = self.ff._set_list(['ext_to_ignore1', 'ext_to_ignore2'])
+        fl = self._convert_file_list(['fname.ext', 'fname.ext_to_ignore2'])
+        create_files(fl)
+        assert self.ff._pass_ignore_if_same_file_with_extension_condition(path, p.join(path, 'fname')) == True
+        remove_files(fl)
+
+        self.ff.ignore_filename_extension_bool = True
+        self.ff.ignore_filename_extension_list = self.ff._set_list(['ext_to_ignore1', 'ext_to_ignore2'])
+        fl = self._convert_file_list(['fname.ext', 'fname.ext_to_ignore1', 'fname.ext_to_ignore2'])
+        create_files(fl)
+        assert self.ff._pass_ignore_if_same_file_with_extension_condition(path, p.join(path, 'fname')) == True
+        remove_files(fl)
        
     def test_pass_extension_condition(self):
         self.ff.extension_list = self.ff._set_extension_list(['ext', '.ext'])

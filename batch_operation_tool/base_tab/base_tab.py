@@ -85,8 +85,7 @@ class BaseTab(QtGui.QWidget):
 
     def _update_subdirectory(self):
         self.set_subdirectory(self.SubdirectoryCheckBox.isChecked())
-        self.get_files_lists()
-        self.fill_tables()
+        self.refresh_table()
         
     def get_files_lists(self):
         self.filter_widget.update_files_lists()
@@ -134,5 +133,8 @@ class BaseTab(QtGui.QWidget):
         if dname is '':
             dname = dname0
         self.set_dname(dname)
+        self.refresh_table()
+
+    def refresh_table(self):
         self.get_files_lists()
         self.fill_tables()

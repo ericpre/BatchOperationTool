@@ -79,3 +79,4 @@ class EMSConversionTab(BaseTab):
         
     def _convert(self):
         self.ems_conversion_widget.convert_file()
+        self.refresh_table()
