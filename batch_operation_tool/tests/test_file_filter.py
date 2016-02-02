@@ -77,11 +77,26 @@ class test_Filter():
         assert self.ff.files_to_use_list == []
         assert self.ff.files_to_ignore_list == [p.join('path', l) for l in self.fl]
 
-    def test_get_conditional_files_list_string(self):
+    def test_get_conditional_files_list_path4(self):
+        self.ff.ignore_string_path_bool = True
+        self.ff.ignore_string_path_list = self.ff._set_list(['to_ignore', 'abc'])
+        self.ff._get_conditional_files_list(self.fl, 'abc')
+        assert self.ff.files_to_use_list == []
+        assert self.ff.files_to_ignore_list == [p.join('path', l) for l in self.fl]
+
+    def test_get_conditional_files_list_string0(self):
         self.ff.string_list = self.ff._set_list(['fname'])
         self.ff._get_conditional_files_list(self.fl, '')
         assert self.ff.files_to_use_list == self._convert_file_list(['fname0.ext', 'fname1.ext', 'fname2.ext2', 'fname3.abc'])
         assert self.ff.files_to_ignore_list == self._convert_file_list([])
+
+    def test_get_conditional_files_list_string1(self):
+        self.ff.string_list = self.ff._set_list(['fname0', 'fname1'])
+        self.ff._get_conditional_files_list(self.fl, '')
+        print '1:', self.ff.files_to_use_list
+        print '2:', self.ff.files_to_ignore_list
+        assert self.ff.files_to_use_list == self._convert_file_list(['fname0.ext', 'fname1.ext'])
+        assert self.ff.files_to_ignore_list == self._convert_file_list(['fname2.ext2', 'fname3.abc'])
 
     def test_get_conditional_files_list_string2(self):
         self.ff.string_list = self.ff._set_list(['file'])

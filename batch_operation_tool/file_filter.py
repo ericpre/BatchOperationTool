@@ -78,11 +78,7 @@ class FileFilter():
     def _pass_string_in_fname_condition(self, fname):
         """ return True for file going to files_to_use_list, when:
             - string from string_list IS in filename """
-        for string in self.string_list:
-            if string in fname:
-                return True
-            else:
-                return False
+        return not self._pass_ignore_condition(True, fname, self.string_list)
 
     def _pass_ignore_string_in_fname_condition(self, fname):
         """ return True for file going to files_to_use_list, when:
@@ -107,6 +103,7 @@ class FileFilter():
             - ignore_filename_extension_bool is False
             OR
             - ignore_filename_extension_bool is True
+                AND
             - fname+ext with ext from ignore_filename_extension_list DOES exist """
         if self.ignore_filename_extension_bool:
             for ext in self.ignore_filename_extension_list:
@@ -116,17 +113,24 @@ class FileFilter():
                     pass
         else:
             return True
-        return False
+        return False # when it passes all the case in the for loop
 
     def _pass_ignore_condition(self, active, string_to_check, string_list):
+        """ return True for file going to files_to_use_list, when:
+            - active is False
+            OR
+            - active is True
+                AND
+            - string IS NOT in string_to_check """
         if active:
             for string in string_list:
                 if string in string_to_check:
                     return False
                 else:
-                    return True
+                    pass
         else:
-            return True         
+            return True
+        return True # when it passes all the case in the for loop
 
     def _pass_extension_condition(self, extension):
         # ignore file if ext is not in the extension_list
