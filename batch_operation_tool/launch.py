@@ -4,7 +4,7 @@ Created on Sun Dec 27 21:35:45 2015
 
 @author: eric
 """
-import sys, os
+import sys
 from python_qt_binding import QtGui
 
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI

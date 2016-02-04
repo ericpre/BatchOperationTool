@@ -41,6 +41,7 @@ class test_ConvertTIA:
 
     def test_convert_tia_single_item(self):
         self.tia_reader.contrast_streching = True
+        self.tia_reader.overwrite = True
         data = np.arange(100).reshape((10,10)).astype("float")
         self.tia_reader._convert_tia_single_item(hs.signals.Image(data))
         assert os.path.exists(self.tia_reader.fname_ext)
@@ -60,15 +61,3 @@ class test_ConvertTIA:
         self.tia_reader.convert_tia()
         assert os.path.exists(self.tia_reader.fname_ext)
         os.remove(self.tia_reader.fname_ext)
-
-    def test_ask_confirmation_overwrite(self):
-        item = hs.signals.Image(np.ones((100,100)))
-        extension = self.tia_reader.extension_list[0]
-        self.tia_reader.set_fname(os.path.join(os.path.dirname(__file__), self.tia_reader.fname))
-        self.tia_reader.fname_ext = '.'.join([os.path.splitext(self.tia_reader.fname)[0], extension])
-        result = self.tia_reader._ask_confirmation_overwrite(item)
-        if result:
-            assert os.path.exists(self.tia_reader.fname_ext)
-            os.remove(self.tia_reader.fname_ext)
-        else:
-            assert result == False

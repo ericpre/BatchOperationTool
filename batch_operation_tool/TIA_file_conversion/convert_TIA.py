@@ -11,7 +11,7 @@ import hyperspy.api as hs
 from hyperspy.misc.image_tools import contrast_stretching
 
 class ConvertTIA:
-    def __init__(self, fname=None, extension_list=['jpg'], overwrite=False,
+    def __init__(self, fname=None, extension_list=['jpg'], overwrite=None,
                  contrast_streching=False, saturated_pixels=0.4,
                  normalise=False):
         self.fname = fname
@@ -20,6 +20,9 @@ class ConvertTIA:
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
         self.normalisation = normalise
+        # to ask to overwrite the first time when the checkBox is unchecked
+        if not overwrite:
+            self.overwrite = None
 
     def set_fname(self, fname):
         self.fname = fname
@@ -33,14 +36,13 @@ class ConvertTIA:
 
     def convert_tia(self):
         if isinstance(self.s, list):
-            for item in self.s:
-                if self._convert_tia_single_item(item) == 'NoToAll':
-                    return 'NoToAll'
+            for i, item in enumerate(self.s):
+                suffix = '_'+str(i)
+                self._convert_tia_single_item(item, suffix)
         else:
-            if self._convert_tia_single_item(self.s)  == 'NoToAll':
-                return 'NoToAll'
+            self._convert_tia_single_item(self.s)
         
-    def _convert_tia_single_item(self, item):
+    def _convert_tia_single_item(self, item, suffix=''):
         """ An attempt to add the scale in tif file to be read in ImageJ: not working... 
         if ext == 'tif':
             scale = ima.axes_manager[0].scale
@@ -59,20 +61,13 @@ class ConvertTIA:
             vmin, vmax = contrast_stretching(item.data, self.saturated_pixels)
             item.data = self.normalise(item.data, vmin, vmax)
         for extension in self.extension_list:
-            self.fname_ext = '.'.join([os.path.splitext(self.fname)[0], extension])
-            if self.overwrite:
-                self._save_data(item, overwrite=self.overwrite)   
-            elif os.path.exists(self.fname_ext) and not self.overwrite:
-                write_answer = self._ask_confirmation_overwrite(item)
-                if write_answer == 'NoToAll':
-                    return 'NoToAll'
-                elif write_answer == False:
-                    pass
-                else:
-                    self._save_data(item, overwrite=True)
+            self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
+                                      '.', extension])
+            if os.path.exists(self.fname_ext) and self.overwrite is None:
+                write_answer = self._ask_confirmation_overwrite()
+                self._save_data(item, overwrite=write_answer)
             else:
-                #don't understand why overwrite need to be True if the file doesn't exist
-                self._save_data(item, overwrite=True)
+                self._save_data(item, overwrite=self.overwrite)
 
     def _questionBox(self, fname, path):
         msgBox = QtGui.QMessageBox()
@@ -85,21 +80,25 @@ class ConvertTIA:
         msgBox.addButton(QtGui.QMessageBox.NoToAll)
         return msgBox.exec_()     
 
-    def _ask_confirmation_overwrite(self, item):
+    def _ask_confirmation_overwrite(self):
         # Add a button to ask "Yes to all", "No to all"
         path = os.path.split(self.fname_ext)[0]
         fname = os.path.split(self.fname_ext)[1]
         questionBox = self._questionBox(fname, path)
-        if questionBox == QtGui.QMessageBox.Yes or questionBox == QtGui.QMessageBox.YesToAll:
-            if questionBox == QtGui.QMessageBox.YesToAll:
-                self.overwrite = True
+        if questionBox == QtGui.QMessageBox.Yes:
+            self.overwrite = None
+            return True
+        elif questionBox == QtGui.QMessageBox.YesToAll:
+            self.overwrite = True
             return True
         elif questionBox == QtGui.QMessageBox.NoToAll:
-            return "NoToAll"
+            self.overwrite = False
+            return False
         else:
+            self.overwrite = None
             return False
 
-    def _save_data(self, item, overwrite=False):
+    def _save_data(self, item, overwrite=None):
         item.save(self.fname_ext, overwrite=overwrite)
 
     def normalise(self, arr, vmin=None, vmax=None):

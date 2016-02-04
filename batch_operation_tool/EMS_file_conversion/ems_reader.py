@@ -24,13 +24,16 @@ EMS file format: File starts with two 32 bit integers that gives the number of
                  floating point)
 """
 class EMSReader():
-    def __init__(self, fname=None, extension_list=['rpl'], overwrite=False,
+    def __init__(self, fname=None, extension_list=['rpl'], overwrite=None,
                  log_to_linear_scale=False, data_type='image'):
         self.fname = fname
         self.extension_list = extension_list
         self.overwrite = overwrite
         self.log_to_linear_scale = log_to_linear_scale
         self.data_type = data_type
+        # to ask to overwrite the first time when the checkBox is unchecked
+        if not overwrite:
+            self.overwrite = None
 
     def set_fname(self, fname):
         self.fname = fname
@@ -68,30 +71,45 @@ class EMSReader():
             
     def convert_ems(self):
         if self.log_to_linear_scale:
-            self.ima = np.exp(self.ima)
-           
+            self.ima = np.exp(self.ima)           
         for extension in self.extension_list:
             self.fname_ext = '.'.join([os.path.splitext(self.fname)[0], extension])
-            if self.overwrite:
-                self._save_data(overwrite=self.overwrite)   
-            elif os.path.exists(self.fname_ext) and not self.overwrite:
-                self._ask_confirmation_overwrite()
+            if os.path.exists(self.fname_ext) and self.overwrite is None:
+                write_answer = self._ask_confirmation_overwrite()
+                self._save_data(overwrite=write_answer)
             else:
-                self._save_data()  
+                self._save_data(overwrite=self.overwrite)
+
+    def _questionBox(self, fname, path):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle("Overwriting File?")
+        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?"%(fname, path)
+        msgBox.setText(question)
+        msgBox.addButton(QtGui.QMessageBox.Yes)
+        msgBox.addButton(QtGui.QMessageBox.YesToAll)
+        msgBox.addButton(QtGui.QMessageBox.No)
+        msgBox.addButton(QtGui.QMessageBox.NoToAll)
+        return msgBox.exec_()   
 
     def _ask_confirmation_overwrite(self):
+        # Add a button to ask "Yes to all", "No to all"
         path = os.path.split(self.fname_ext)[0]
         fname = os.path.split(self.fname_ext)[1]
-        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?"%(fname, path)
-        questionBox = QtGui.QMessageBox.question(None, 'Overwriting File?',
-                                                 question, QtGui.QMessageBox.Yes,
-                                                 QtGui.QMessageBox.No)
+        questionBox = self._questionBox(fname, path)
         if questionBox == QtGui.QMessageBox.Yes:
-            self._save_data(overwrite=True)     
+            self.overwrite = None
             return True
-        return False
+        elif questionBox == QtGui.QMessageBox.YesToAll:
+            self.overwrite = True
+            return True
+        elif questionBox == QtGui.QMessageBox.NoToAll:
+            self.overwrite = False
+            return False
+        else:
+            self.overwrite = None
+            return False
         
-    def _save_data(self, overwrite=False):
+    def _save_data(self, overwrite=None):
         ima_hs = hs.signals.Image(self.ima)
         ima_hs.save(self.fname_ext, overwrite=overwrite)
 
