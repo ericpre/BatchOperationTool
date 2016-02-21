@@ -14,7 +14,7 @@ from hyperspy.misc.image_tools import contrast_stretching
 class ConvertTIA:
     ureg = UnitRegistry()
     
-    def __init__(self, fname=None, extension_list=['jpg'], overwrite=None,
+    def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
                  contrast_streching=False, saturated_pixels=0.4,
                  normalise=False):
         self.fname = fname
@@ -47,12 +47,14 @@ class ConvertTIA:
         
     def _convert_tia_single_item(self, item, suffix=''):
         kwargs = {}
-        if self.contrast_streching:
-            vmin, vmax = contrast_stretching(item.data, self.saturated_pixels)
-            item.data = self.normalise(item.data, vmin, vmax)
+        original_data = item.data.copy()
         for extension in self.extension_list:
+            item.data = original_data
+            if extension in ['jpg', 'jpeg'] and self.contrast_streching:
+                vmin, vmax = contrast_stretching(item.data, self.saturated_pixels)
+                item.data = self.normalise(item.data, vmin, vmax)
             if extension in ['tif', 'tiff']:
-                kwargs = self._imagej_kwargs(item)
+                kwargs = self._get_kwargs(item)
             self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
                                       '.', extension])
             if os.path.exists(self.fname_ext) and self.overwrite is None:
@@ -64,7 +66,7 @@ class ConvertTIA:
             else:
                 self._save_data(item, overwrite=self.overwrite, **kwargs)
 
-    def _imagej_kwargs(self, item, factor=int(1E8)):
+    def _get_scale_unit(self, item):
         unit = item.axes_manager['x'].units
         if unit == u'\xb5m':
             unit = 'um'
@@ -77,10 +79,36 @@ class ConvertTIA:
         print scale_u
         scale, unit = self._get_convenient_scale_unit(scale_u)        
         print scale, unit
+        return scale, unit        
+        
+    def _dm_kwargs(self, item):
+        scale, unit = self._get_scale_unit(item)
+        extratags = [(65003, 's', 3, unit, False),
+                     (65004, 's', 3, unit, False),
+                     (65006, 'd', 1, 0.0, False),
+                     (65007, 'd', 1, 0.0, False),
+                     (65009, 'd', 1, float(scale), False),
+                     (65010, 'd', 1, float(scale), False),
+                     (65012, 's', 3, unit, False),
+                     (65013, 's', 3, unit, False),
+                     (65015, 'i', 1, 1, False),
+                     (65016, 'i', 1, 1, False),
+                     (65024, 'd', 1, 0.0, False),
+                     (65025, 'd', 1, 1.0, False),
+                     (65026, 'i', 1, 1, False)]
+        return extratags
+
+    def _imagej_kwargs(self, item, factor=int(1E8)):
+        scale, unit = self._get_scale_unit(item)
         resolution = ((factor, int(scale*factor)), (factor, int(scale*factor)))
-        description_string = imagej_description(kwargs={"unit":unit})
+        description_string = imagej_description(kwargs={"unit":unit, "scale":scale})
         extratag = [(270, 's', 1, description_string, False)]
         return {"resolution":resolution, "extratags":extratag}
+
+    def _get_kwargs(self, item):
+        tag_kwargs = self._imagej_kwargs(item)
+        tag_kwargs["extratags"].extend(self._dm_kwargs(item))
+        return tag_kwargs
 
     def _get_convenient_scale_unit(self, scale):
         if scale.dimensionality['[length]'] == 1.0:
@@ -163,8 +191,8 @@ def imagej_description(version='1.11a', kwargs={}):
     return '\n'.join(result + append + [''])
 
 if __name__ == '__main__':        
-    fname = '12.37.10 CCD Acquire.emi'
-    convert_TIA_file = ConvertTIA()    
+    fname = '10.51.36 Scanning Acquire.emi'
+    convert_TIA_file = ConvertTIA(overwrite=True)    
     
     s = hs.load(fname)
     convert_TIA_file.read(fname)
