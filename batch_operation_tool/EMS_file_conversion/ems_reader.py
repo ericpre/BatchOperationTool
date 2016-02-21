@@ -137,36 +137,4 @@ if __name__ == '__main__':
     questionBox = QtGui.QMessageBox.question(None, 'Overwriting File?',
                                              question, QtGui.QMessageBox.Yes,
                                              QtGui.QMessageBox.No)
-   
-#
-#    dname = "/mnt/data/Work/4-UoM/graphene/graphene_MgO-simulation/old"
-#    fname = 'MgOslice_z-2x2x2_0000'
-#    
-#    os.chdir(dname)    
-#    real_part, imag_part = open_jems_wavefuntion(fname)
-#    #wave_function = complex(real_part,imag_part)
-#    
-#    plt.figure()
-#    plt.imshow(real_part)
-#    plt.title('Real part')
-#    
-#    plt.figure()
-#    plt.imshow(imag_part)
-#    plt.title('Imaginary part')
-#
-#    dname = "/mnt/data/Work/4-UoM/crystal_structure/MgO/slice-z-1x1x3"
-#    fname = "MgO-1x1x3-slice0-thickness0.2105"
-#
-#    os.chdir(dname)    
-#    ima = open_jems_single_image(fname)
-#
-#    norm_display = 10000
-#    diff_linear = np.exp(ima)
-#    plt.figure()
-#    plt.imshow(diff_linear, vmax=diff_linear.max()/norm_display)
-#    plt.colorbar()
-#    
-#    dname='/mnt/data/Work/4-UoM/crystal_structure/MgO/slice-z-1x1x3'
-#    fname = "MgO_slice_z-1x1x3_slice5-thickness1.263-kinematic"
-#    convert_ems_using_hyperspy(fname)
-#
+

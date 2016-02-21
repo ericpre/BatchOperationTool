@@ -101,14 +101,8 @@ class BatchOperationToolUI(QtGui.QWidget):
 
 if __name__ == '__main__':
     sys.path.append(os.path.dirname(__file__))
-#    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     batch_operation_widget = BatchOperationToolUI()
-    batch_operation_widget.tia_conversion_tab.set_dname('/mnt/data/Work/4-UoM/GO/TEM_images/2016-01-14-GO24H_tissue-quantifoilR77')
-
     batch_operation_widget.show()
-#    file_config1 = '/mnt/data/Work/4-UoM/crystal_structure/BP/BP-1x3x1-slice_y/conversion_settings.json'
-#    batch_operation_widget.ems_conversion_tab.load_config(file_config1)
-#    file_config2 = '/mnt/data/Work/4-UoM/crystal_structure/BP/BP-1x3x1-slice_y/delete_settings.json'
-#    batch_operation_widget.delete_tab.load_config(file_config2)
 
-#    sys.exit(app.exec_())
+    sys.exit(app.exec_())
