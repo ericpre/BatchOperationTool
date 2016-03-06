@@ -11,9 +11,10 @@ from batch_operation_tool.delete.filter_widget import FilterWidget
 from batch_operation_tool.delete.delete import delete_files_list_function
 
 class DeleteTab(BaseTab):
-    def __init__(self, fill_tables, parent=None):
+    def __init__(self, fill_tables, parent=None, name="Delete files"):
         """ Need to pass the fill_tables method from parent class"""
         super(DeleteTab, self).__init__(fill_tables=fill_tables, parent=parent)
+        self.name = name
 #        self._initUI()
 #        self._init_main_parameters()
 #        self.fill_tables = fill_tables

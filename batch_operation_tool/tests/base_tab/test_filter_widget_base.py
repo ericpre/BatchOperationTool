@@ -8,6 +8,7 @@ import sys, os
 from python_qt_binding import QtGui
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
+from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.base_tab.filter_widget_base import FilterWidgetBase
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
@@ -36,6 +37,7 @@ class test_FilterWidgetBase:
                            'ignore_filename_extension_list':['']}
         self.tests_dir = get_dirname_file()
         self.botui = BatchOperationToolUI(load_settings=None)
+        self.botui.add_tab(DeleteTab)
         self.bt = BaseTab(self.botui.fill_tables, parent=self.botui)
         self.fw = FilterWidgetBase(parent=self.bt)
         self.fw.set_dname(self.tests_dir)

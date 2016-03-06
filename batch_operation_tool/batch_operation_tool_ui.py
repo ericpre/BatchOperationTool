@@ -13,11 +13,8 @@ TODO:
 """
 
 import sys, os
-from python_qt_binding import QtGui  # new imports
+from python_qt_binding import QtGui # new imports
 # http://cyrille.rossant.net/making-pyqt4-pyside-and-ipython-work-together/
-from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
-from batch_operation_tool.delete.delete_tab import DeleteTab
-from batch_operation_tool.TIA_file_conversion.TIA_conversion_tab import TIAConversionTab
 
 class BatchOperationToolUI(QtGui.QWidget):    
     def __init__(self, window_title='Batch Operation Tool',
@@ -32,7 +29,7 @@ class BatchOperationToolUI(QtGui.QWidget):
         self.setWindowTitle(window_title)
 
         self._create_tables_widget()
-        self._create_header_tabs(load_settings=load_settings)
+        self._create_header_tabs()
         
         vbox = QtGui.QVBoxLayout()
         vbox.addWidget(self.headers_tab)
@@ -41,28 +38,26 @@ class BatchOperationToolUI(QtGui.QWidget):
         
         self._connect_ui()
 
+    def add_tab(self, widget, load_settings='default', **kwargs):
+        # Create the widget instance
+        tab_widget = widget(fill_tables=self.fill_tables, parent=self, **kwargs)
+        # Create the widget instance to the QTabWidget
+        self.tab[tab_widget.name] = tab_widget
+        self.headers_tab.addTab(tab_widget, tab_widget.name)
+        if load_settings == 'default':
+            tab_widget.load_config()
+        elif load_settings == None:
+            pass
+        else:
+            raise ValueError("Load settings argument incorrect, should be None or 'default'")        
+
     def _connect_ui(self):
         self.headers_tab.currentChanged.connect(self.fill_tables)
 #        self.keyPressEvent = self._delete_active_raw_on_event
 
-    def _create_header_tabs(self, load_settings='default'):
+    def _create_header_tabs(self):
         self.headers_tab = QtGui.QTabWidget()
-        self.ems_conversion_tab = EMSConversionTab(fill_tables=self.fill_tables,
-                                                   parent=self)
-        self.delete_tab = DeleteTab(fill_tables=self.fill_tables, parent=self)
-        self.tia_conversion_tab = TIAConversionTab(fill_tables=self.fill_tables, parent=self)
-
-        self.headers_tab.addTab(self.tia_conversion_tab, "TIA file conversion") 
-        self.headers_tab.addTab(self.delete_tab, "Delete files") 
-        self.headers_tab.addTab(self.ems_conversion_tab, "EMS file conversion")   
-        if load_settings == 'default':
-            self.tia_conversion_tab.load_config()
-            self.delete_tab.load_config()
-            self.ems_conversion_tab.load_config()
-        elif load_settings == None:
-            pass
-        else:
-            raise ValueError("Load settings argument incorrect, should be None or 'default'") 
+        self.tab = {}
 
     def _create_tables_widget(self):
         self._setup_tables()
@@ -96,13 +91,34 @@ class BatchOperationToolUI(QtGui.QWidget):
             table.setItem(i, 1, QtGui.QTableWidgetItem(dirname))
             table.setItem(i, 2, QtGui.QTableWidgetItem(filename))
 
+    def get_tab_with_name(self, name):
+        return self.tab[name]
+
     def _get_current_tab_widget(self):
-        return self.headers_tab.currentWidget()        
+        return self.headers_tab.currentWidget()
+
+def get_batch_operation_widget():
+    batch_operation_widget = BatchOperationToolUI()
+
+    # Add delete tab
+    from batch_operation_tool.delete.delete_tab import DeleteTab
+    batch_operation_widget.add_tab(DeleteTab)
+
+    # Add EMS conversion tab    
+    from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
+    batch_operation_widget.add_tab(EMSConversionTab)
+
+    # Add TIA conversion tab    
+    from batch_operation_tool.TIA_file_conversion.TIA_conversion_tab import TIAConversionTab
+    batch_operation_widget.add_tab(TIAConversionTab)
+    
+    return batch_operation_widget
 
 if __name__ == '__main__':
     sys.path.append(os.path.dirname(__file__))
     app = QtGui.QApplication(sys.argv)
-    batch_operation_widget = BatchOperationToolUI()
+    
+    batch_operation_widget = get_batch_operation_widget()
     batch_operation_widget.show()
 
     sys.exit(app.exec_())

@@ -36,7 +36,9 @@ class test_EMSConversionTab:
                                      'overwrite':False}
         
         self.botui = BatchOperationToolUI(load_settings=None)
-        self.emsct = EMSConversionTab(self.botui.fill_tables, parent=self.botui)
+        name ='EMS conversion'
+        self.botui.add_tab(EMSConversionTab, name=name)
+        self.emsct = self.botui.tab[name]
 
     def test_set_filter_parameters(self):
         self.emsct.set_filter_parameters(**self.filter_parameters)

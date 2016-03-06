@@ -13,9 +13,10 @@ from batch_operation_tool.EMS_file_conversion.filter_widget import FilterWidget
 from batch_operation_tool.EMS_file_conversion.operation_widget import EMSConversionWidget
 
 class EMSConversionTab(BaseTab):    
-    def __init__(self, fill_tables, parent=None):
+    def __init__(self, fill_tables, name="EMS file conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
         super(EMSConversionTab, self).__init__(fill_tables=fill_tables, parent=parent)
+        self.name = name
         
     def _initUI(self):
         self.filter_widget = FilterWidget(parent=self)

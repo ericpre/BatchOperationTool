@@ -23,6 +23,8 @@ class test_BatchOperationToolUI:
 
     def setUp(self):
         self.botui = BatchOperationToolUI()
+        self.botui.add_tab(EMSConversionTab, name='EMS conversion tab')
+        self.botui.add_tab(DeleteTab, name='Delete files')
         # match the default_settings.json files from the library
         self.dt_filter_parameters = {'string_list':[''],
                                      'extension_list':[''],
@@ -43,27 +45,22 @@ class test_BatchOperationToolUI:
                                        'ignore_filename_extension_bool':False,
                                        'ignore_filename_extension_list':['']}
         self.emst_main_parameters = {'subdirectory':False,
-                                     'directory':self.botui.ems_conversion_tab.get_dname()}
+                                     'directory':self.botui.tab['EMS conversion tab'].get_dname()}
 
-    def test_create_header_tabs_loading_None(self):
-        self.botui._create_header_tabs(load_settings=None)
-        assert type(self.botui.ems_conversion_tab) == EMSConversionTab
-        assert type(self.botui.delete_tab) == DeleteTab
+    def test_add_tabs_loading_None(self):
+        assert type(self.botui.tab['EMS conversion tab']) == EMSConversionTab
 
-    def test_create_header_tabs_loading_default(self):
-        self.botui._create_header_tabs(load_settings='default')
-        assert type(self.botui.ems_conversion_tab) == EMSConversionTab
-        assert type(self.botui.delete_tab) == DeleteTab
-#        assert self.botui.delete_tab.filter_widget.get_parameters() == self.dt_filter_parameters
-#        assert self.botui.delete_tab._get_main_parameters() == self.dt_main_parameters
-#        assert self.botui.ems_conversion_tab.filter_widget.get_parameters() == self.emst_filter_parameters
-#        assert self.botui.ems_conversion_tab._get_main_parameters() == self.emst_main_parameters
+    def test_add_tabs_loading_default(self):
+        assert type(self.botui.tab['EMS conversion tab']) == EMSConversionTab
+#        assert self.botui.tab['Delete files'].filter_widget.get_parameters() == self.dt_filter_parameters
+#        assert self.botui.tab['Delete files']._get_main_parameters() == self.dt_main_parameters
+#        assert self.botui.tab['EMS conversion tab'].filter_widget.get_parameters() == self.emst_filter_parameters
+#        assert self.botui.tab['EMS conversion tab']._get_main_parameters() == self.emst_main_parameters
 
     @raises(ValueError)
-    def test_create_header_tabs_loading_exception(self):
-        self.botui._create_header_tabs('')
-        assert type(self.botui.ems_conversion_tab) == EMSConversionTab
-        assert type(self.botui.delete_tab) == DeleteTab
+    def test_add_tabs_loading_exception(self):
+        self.botui.add_tab(EMSConversionTab, load_settings='')
+        assert type(self.botui.tab['EMS conversion tab']) == EMSConversionTab
         
     def test_create_tables_widget(self):
         assert type(self.botui.tables_widget) == QtGui.QTabWidget
@@ -90,10 +87,17 @@ class test_BatchOperationToolUI:
             assert table.item(i, 0).text() == path
             assert table.item(i, 1).text() == dirname
             assert table.item(i, 2).text() == filename
-        
+
+    def test_get_tab_with_name(self):
+        name = 'Delete files'
+        tab = self.botui.get_tab_with_name(name)
+        assert tab.name == 'Delete files'
+        assert isinstance(tab, DeleteTab)
+        assert self.botui.tab[name].name == 'Delete files'
+
     def test_get_current_tab_widget(self):
-        self.botui._create_header_tabs()
-        self.botui.headers_tab.setCurrentWidget(self.botui.delete_tab)
-        assert self.botui._get_current_tab_widget() == self.botui.delete_tab
-        self.botui.headers_tab.setCurrentWidget(self.botui.ems_conversion_tab)
-        assert self.botui._get_current_tab_widget() == self.botui.ems_conversion_tab
+        # select delete tab
+        name = 'Delete files'
+        tab = self.botui.get_tab_with_name(name)
+        self.botui.headers_tab.setCurrentWidget(tab)
+        assert self.botui._get_current_tab_widget() == tab

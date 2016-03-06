@@ -8,6 +8,7 @@ import sys, os, json
 from python_qt_binding import QtGui
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
+from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 from batch_operation_tool.tests.utils_tests import merge_two_dicts
 
@@ -33,6 +34,8 @@ class test_BaseTab:
                                 'directory':os.getcwd()}  
 
         self.botui = BatchOperationToolUI(load_settings=None)
+        # dummy tab required for initialisation
+        self.botui.add_tab(DeleteTab)
         self.bt = BaseTab(self.botui.fill_tables, parent=self.botui)
 
     def test_init_main_parameters(self):

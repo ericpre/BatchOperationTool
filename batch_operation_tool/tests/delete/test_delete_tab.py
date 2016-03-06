@@ -32,6 +32,7 @@ class test_DeleteTab:
                                 'directory':os.getcwd()}  
 
         self.botui = BatchOperationToolUI(load_settings=None)
+        self.botui.add_tab(DeleteTab)
         self.dt = DeleteTab(self.botui.fill_tables, parent=self.botui)
         self.fl = ['fname0.ext', 'fname1.ext', 'fname2.ext2', 'fname3.abc']
         

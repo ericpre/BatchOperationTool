@@ -30,8 +30,9 @@ class test_FilterWidget:
                           'ignore_filename_extension_bool':False,
                           'ignore_filename_extension_list':['']}
         self.botui = BatchOperationToolUI(load_settings=None)
-        self.dt = DeleteTab(self.botui.fill_tables, parent=self.botui)
-        self.fw = FilterWidget(parent=self.dt)
+        name ='Delete files'
+        self.botui.add_tab(DeleteTab, name=name)
+        self.fw = FilterWidget(parent=self.botui.tab[name])
         self.fl = ['fname0.ext', 'fname1.ext', 'fname2.ext2', 'fname3.abc']
     
     def test_set_parameter(self):

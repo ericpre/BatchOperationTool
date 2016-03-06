@@ -93,8 +93,6 @@ class test_Filter():
     def test_get_conditional_files_list_string1(self):
         self.ff.string_list = self.ff._set_list(['fname0', 'fname1'])
         self.ff._get_conditional_files_list(self.fl, '')
-        print '1:', self.ff.files_to_use_list
-        print '2:', self.ff.files_to_ignore_list
         assert self.ff.files_to_use_list == self._convert_file_list(['fname0.ext', 'fname1.ext'])
         assert self.ff.files_to_ignore_list == self._convert_file_list(['fname2.ext2', 'fname3.abc'])
 

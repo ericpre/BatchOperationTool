@@ -14,9 +14,10 @@ from batch_operation_tool.TIA_file_conversion.filter_widget import FilterWidget
 from batch_operation_tool.TIA_file_conversion.operation_widget import TIAConversionWidget
 
 class TIAConversionTab(BaseTab):    
-    def __init__(self, fill_tables, parent=None):
+    def __init__(self, fill_tables, name="TIA file conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
         super(TIAConversionTab, self).__init__(fill_tables=fill_tables, parent=parent)
+        self.name = name
 
     def _initUI(self):
         self.filter_widget = FilterWidget(parent=self)
