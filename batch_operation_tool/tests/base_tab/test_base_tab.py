@@ -76,14 +76,14 @@ class test_BaseTab:
             config = json.load(data_file)
         config_parameters = merge_two_dicts(config['Main'], config['Filter'])
 
-        for key in config_parameters.keys():
+        for key in list(config_parameters.keys()):
             assert config_parameters[key] == parameters[key]
 
         os.remove(fname)
 
     def test_set_main_parameters(self):      
         self.bt._set_main_parameters(**self.main_parameters)
-        for key in self.main_parameters.keys():
+        for key in list(self.main_parameters.keys()):
             assert self.bt.main_parameters[key] == self.main_parameters[key]
     
     def test_get_main_parameters(self):   
@@ -98,7 +98,7 @@ class test_BaseTab:
 
     def test_set_filter_parameters(self):
         self.bt.set_filter_parameters(**self.filter_parameters)
-        for key in self.filter_parameters.keys():
+        for key in list(self.filter_parameters.keys()):
             assert self.bt.filter_widget.parameters[key] == self.filter_parameters[key]
     
     def test_set_dname(self):
@@ -120,3 +120,6 @@ class test_BaseTab:
         subdirectory = True
         self.bt.set_subdirectory(subdirectory)
         assert self.bt.get_subdirectory() == subdirectory
+
+if __name__ == '__main__':
+    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])

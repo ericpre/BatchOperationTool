@@ -7,6 +7,7 @@ Created on Sat Dec 26 00:03:05 2015
 import os, sys
 import numpy as np
 from python_qt_binding import QtGui
+import nose
 
 from batch_operation_tool.EMS_file_conversion.ems_reader import EMSReader
 
@@ -50,3 +51,6 @@ class test_EMS_Reader:
             os.remove(self.ems_reader.fname_ext)
         else:
             assert result == False
+
+if __name__ == '__main__':
+    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])

@@ -4,8 +4,9 @@ Created on Wed Dec 23 11:22:46 2015
 
 @author: eric
 """
-import sys, os
+import sys
 from python_qt_binding import QtGui
+import nose
 
 from batch_operation_tool.delete.filter_widget import FilterWidget
 from batch_operation_tool.delete.delete_tab import DeleteTab
@@ -48,4 +49,7 @@ class test_FilterWidget:
 
     def test_get_parameter(self):
         self.fw.set_parameters(**self.parameters)
-        assert self.parameters == self.fw.get_parameters()       
+        assert self.parameters == self.fw.get_parameters()
+
+if __name__ == '__main__':
+    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])

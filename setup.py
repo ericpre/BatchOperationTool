@@ -2,11 +2,19 @@
 
 from setuptools import setup, find_packages
 
+import sys
+v = sys.version_info
+if v[0] != 3:
+    error = "ERROR: BatchOperationTool requires Python 3. " \
+            "For Python 2.7, download and install the Python 2 branch."
+    print(error)
+    sys.exit(1)
+
 install_req = ['numpy',
                'hyperpspy']
                
 setup(name = 'Batch operation tool',
-      version = '0.1',
+      version = '0.2',
 #      scripts = [os.path.join('bin', 'myscript')],
       packages = find_packages(exclude=['tests*']),
       license = 'GPLv3',

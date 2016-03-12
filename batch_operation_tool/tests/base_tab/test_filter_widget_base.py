@@ -6,6 +6,7 @@ Created on Sun Dec 27 12:43:18 2015
 """
 import sys, os
 from python_qt_binding import QtGui
+import nose
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
 from batch_operation_tool.delete.delete_tab import DeleteTab
@@ -93,3 +94,6 @@ class test_FilterWidgetBase:
         dname = 'dummy_dname'
         self.fw.set_dname(dname)
         assert self.fw.dname == dname
+
+if __name__ == '__main__':
+   nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])

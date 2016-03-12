@@ -13,14 +13,6 @@ from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
 
 class test_BatchOperationToolUI:
-    @classmethod
-    def setup_class(self):
-        self.app = QtGui.QApplication(sys.argv)
-
-    @classmethod
-    def teardown_class(self):
-        self.app.quit()
-
     def setUp(self):
         self.botui = BatchOperationToolUI()
         self.botui.add_tab(EMSConversionTab, name='EMS conversion tab')

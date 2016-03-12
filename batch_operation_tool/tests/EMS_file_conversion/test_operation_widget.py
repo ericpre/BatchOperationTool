@@ -6,6 +6,7 @@ Created on Sun Dec 27 14:57:30 2015
 """
 import sys
 from python_qt_binding import QtGui
+import nose
 
 from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
 from batch_operation_tool.EMS_file_conversion.operation_widget import EMSConversionWidget  
@@ -32,13 +33,16 @@ class test_EMSConversionWidgets:
 
     def test_set_parameters(self):
         self.emscw.set_parameters(**self.operation_parameters)
-        for key in self.operation_parameters.keys():
+        for key in list(self.operation_parameters.keys()):
             assert self.emscw.parameters[key] == self.operation_parameters[key]
 
     def test_get_parameters(self):
         self.emscw.set_parameters(**self.operation_parameters)
-        for key in self.operation_parameters.keys():
+        for key in list(self.operation_parameters.keys()):
             assert self.emscw.parameters[key] == self.operation_parameters[key]
     
     def test_convert_file(self):
         pass
+    
+if __name__ == '__main__':
+    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])

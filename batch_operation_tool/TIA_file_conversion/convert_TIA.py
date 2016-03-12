@@ -68,21 +68,19 @@ class ConvertTIA:
 
     def _get_scale_unit(self, item):
         unit = item.axes_manager['x'].units
-        if unit == u'\xb5m':
+        if unit == '\xb5m':
             unit = 'um'
-        # workaround for some of the TIA files...
-        # Assuming the <undefined> correspond to TIA files, i. e. the units is 'm'
-        if unit == '<undefined>':
-            unit = 'm'
-        print unit
+#        # workaround for some of the TIA files...
+#        # Assuming the <undefined> correspond to TIA files, i. e. the units is 'm'
+#        if unit == '<undefined>':
+#            unit = 'm'
         scale_u = item.axes_manager['x'].scale*self.ureg(unit)
-        print scale_u
         scale, unit = self._get_convenient_scale_unit(scale_u)        
-        print scale, unit
-        return scale, unit        
+        return scale, unit  
         
     def _dm_kwargs(self, item):
         scale, unit = self._get_scale_unit(item)
+        print('unit_dm', unit)
         extratags = [(65003, 's', 3, unit, False),
                      (65004, 's', 3, unit, False),
                      (65006, 'd', 1, 0.0, False),
@@ -103,6 +101,7 @@ class ConvertTIA:
         resolution = ((factor, int(scale*factor)), (factor, int(scale*factor)))
         description_string = imagej_description(kwargs={"unit":unit, "scale":scale})
         extratag = [(270, 's', 1, description_string, False)]
+        print(extratag)
         return {"resolution":resolution, "extratags":extratag}
 
     def _get_kwargs(self, item):
@@ -119,7 +118,7 @@ class ConvertTIA:
                 scale = scale.to(self.ureg('um'))
             else:
                 scale = scale.to(self.ureg('mm'))
-            return scale.magnitude, scale.units
+            return scale.magnitude, '{}'.format(scale.units)
         elif scale.dimensionality['[length]'] == -1.0: # for diffraction
             scale = scale.to(self.ureg('1/m'))
             if scale.magnitude > 1E6:
@@ -128,10 +127,10 @@ class ConvertTIA:
                 scale = scale.to(self.ureg('1/um'))
             else:
                 scale = scale.to(self.ureg('1/mm'))
-            return scale.magnitude, scale.units
+            return scale.magnitude, '{}'.format(scale.units)
         else:
-            print "Units not supported"
-            return scale.magnitude, scale.units
+            print("Units not supported")
+            return scale.magnitude, '{}'.format(scale.units)
 
     def _questionBox(self, fname, path):
         msgBox = QtGui.QMessageBox()
@@ -163,7 +162,11 @@ class ConvertTIA:
             return False
 
     def _save_data(self, item, overwrite=None, **kwargs):
-        item.save(self.fname_ext, overwrite=overwrite, **kwargs)
+        # so long that skimage doesn't have the last tifffile.py library, use
+        # use hyperspy one
+        use_local_tifffile = True
+        item.save(self.fname_ext, overwrite=overwrite,
+                  use_local_tifffile=use_local_tifffile, **kwargs)
 
     def normalise(self, arr, vmin=None, vmax=None):
         if vmin == None:
@@ -173,8 +176,8 @@ class ConvertTIA:
         return (arr.astype(float)-vmin)/(vmax-vmin)
 
 if sys.version_info[0] > 2:
-    basestring = str, bytes
-    unicode = str
+    str = str, bytes
+    str = str
 
     def str2bytes(s, encoding="latin-1"):
         return s.encode(encoding)
@@ -185,7 +188,7 @@ else:
 def imagej_description(version='1.11a', kwargs={}):
     result = ['ImageJ=%s' % version]
     append = []
-    for key, value in kwargs.items():
+    for key, value in list(kwargs.items()):
         append.append('%s=%s' % (key.lower(), value))
 
     return '\n'.join(result + append + [''])

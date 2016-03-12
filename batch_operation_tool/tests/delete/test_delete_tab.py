@@ -6,6 +6,7 @@ Created on Thu Dec 24 15:30:41 2015
 """
 import sys, os
 from python_qt_binding import QtGui
+import nose
 
 from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
@@ -38,5 +39,8 @@ class test_DeleteTab:
         
     def test_set_filter_parameters(self):
         self.dt.set_filter_parameters(**self.filter_parameters)
-        for key in self.filter_parameters.keys():
+        for key in list(self.filter_parameters.keys()):
             assert self.dt.filter_widget.parameters[key] == self.filter_parameters[key]
+
+if __name__ == '__main__':
+    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])

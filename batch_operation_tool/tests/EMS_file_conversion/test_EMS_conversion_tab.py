@@ -6,6 +6,7 @@ Created on Sun Dec 27 14:55:06 2015
 """
 import sys, os, json
 from python_qt_binding import QtGui
+import nose
 
 from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
@@ -42,12 +43,12 @@ class test_EMSConversionTab:
 
     def test_set_filter_parameters(self):
         self.emsct.set_filter_parameters(**self.filter_parameters)
-        for key in self.filter_parameters.keys():
+        for key in list(self.filter_parameters.keys()):
             assert self.emsct.filter_widget.parameters[key] == self.filter_parameters[key]
 
     def test_set_operation_parameters(self):
         self.emsct.set_operation_parameters(**self.operation_parameters)
-        for key in self.operation_parameters.keys():
+        for key in list(self.operation_parameters.keys()):
             assert self.emsct.ems_conversion_widget.parameters[key] == self.operation_parameters[key]
 
     def test_load_config(self):       
@@ -83,7 +84,10 @@ class test_EMSConversionTab:
             config = json.load(data_file)
         config_parameters = merge_two_dicts(config['Main'], config['Filter'])
 
-        for key in config_parameters.keys():
+        for key in list(config_parameters.keys()):
             assert config_parameters[key] == parameters[key]
 
         os.remove(fname)
+
+if __name__ == '__main__':
+    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
