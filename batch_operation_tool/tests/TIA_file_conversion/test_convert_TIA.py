@@ -39,6 +39,30 @@ class test_ConvertTIA:
         nt.assert_almost_equal(a[0], 0.005261, places=5)
         assert a[1] == 'micrometer'        
 
+    def test_convert_tia_list_extention(self):
+        self.tia_reader.extension_list = ['tif', 'jpg']
+        self.tia_reader.read(self._get_absolute_path(self.tia_reader.fname))
+        self.tia_reader.convert_tia() 
+        fname = self.tia_reader.fname
+        fname0 = self._get_absolute_path(fname).replace('emi', 'tif')
+        fname1 = self._get_absolute_path(fname).replace('emi', 'jpg')
+        assert os.path.exists(fname0)
+        assert os.path.exists(fname1)
+        os.remove(fname0)
+        os.remove(fname1)
+
+    def test_convert_tia_list_signal(self):
+        fname = '16x16_STEM_BF_DF_acquire.emi'
+        self.tia_reader.read(self._get_absolute_path(fname))
+        self.tia_reader.convert_tia() 
+        fname = self.tia_reader.fname
+        fname0 = self._get_absolute_path(fname).replace('.emi', '_0.jpg')
+        fname1 = self._get_absolute_path(fname).replace('.emi', '_1.jpg')
+        assert os.path.exists(fname0)
+        assert os.path.exists(fname1)
+        os.remove(fname0)
+        os.remove(fname1)
+
     def test_convert_tia_single_item(self):
         self.tia_reader.contrast_streching = True
         self.tia_reader.overwrite = True

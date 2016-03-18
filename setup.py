@@ -21,6 +21,7 @@ setup(name = 'Batch operation tool',
       long_description = open('README.md').read(),
       install_requires = [#'hyperspy >= 0.8',
                           'hyperspy',
+                          'pint',
                           'python_qt_binding'],
       entry_points = {'gui_scripts': ['BatchOperationToolUI=batch_operation_tool.launch:main',]},
       package_data={'batch_operation_tool':

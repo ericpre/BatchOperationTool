@@ -40,7 +40,7 @@ class ConvertTIA:
     def convert_tia(self):
         if isinstance(self.s, list):
             for i, item in enumerate(self.s):
-                suffix = '_'+str(i)
+                suffix = '_%s'%i
                 self._convert_tia_single_item(item, suffix)
         else:
             self._convert_tia_single_item(self.s)
@@ -80,7 +80,6 @@ class ConvertTIA:
         
     def _dm_kwargs(self, item):
         scale, unit = self._get_scale_unit(item)
-        print('unit_dm', unit)
         extratags = [(65003, 's', 3, unit, False),
                      (65004, 's', 3, unit, False),
                      (65006, 'd', 1, 0.0, False),
@@ -101,7 +100,6 @@ class ConvertTIA:
         resolution = ((factor, int(scale*factor)), (factor, int(scale*factor)))
         description_string = imagej_description(kwargs={"unit":unit, "scale":scale})
         extratag = [(270, 's', 1, description_string, False)]
-        print(extratag)
         return {"resolution":resolution, "extratags":extratag}
 
     def _get_kwargs(self, item):
