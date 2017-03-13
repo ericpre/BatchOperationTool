@@ -37,7 +37,7 @@ class test_BatchOperationToolUI:
                                        'ignore_filename_extension_bool':False,
                                        'ignore_filename_extension_list':['']}
         self.emst_main_parameters = {'subdirectory':False,
-                                     'directory':self.botui.tab['EMS conversion tab'].get_dname()}
+                                     'directory':self.botui.tab['EMS conversion tab'].dname}
 
     def test_add_tabs_loading_None(self):
         assert type(self.botui.tab['EMS conversion tab']) == EMSConversionTab
