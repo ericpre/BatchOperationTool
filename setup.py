@@ -23,7 +23,9 @@ setup(name = 'Batch operation tool',
                           'hyperspy',
                           'pint',
                           'python_qt_binding'],
-      entry_points = {'gui_scripts': ['BatchOperationToolUI=batch_operation_tool.launch:main',]},
+      entry_points={
+              'gui_scripts': [
+                      'BatchOperationToolUI=batch_operation_tool.__main__:main']},
       package_data={'batch_operation_tool':
           ['delete/*.json',
            'EMS_file_conversion/*.json',
