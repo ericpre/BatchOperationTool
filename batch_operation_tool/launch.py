@@ -10,13 +10,14 @@ from python_qt_binding import QtGui
 
 from batch_operation_tool.batch_operation_tool_ui import get_batch_operation_widget
 
+
 def main():
     app = QtGui.QApplication(sys.argv)
-    
+
     batch_operation_widget = get_batch_operation_widget()
     batch_operation_widget.show()
 
-    app.exec_()    
+    app.exec_()
 
 if __name__ == '__main__':
     main()

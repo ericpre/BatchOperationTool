@@ -101,15 +101,11 @@ class test_BaseTab:
         for key in list(self.filter_parameters.keys()):
             assert self.bt.filter_widget.parameters[key] == self.filter_parameters[key]
     
-    def test_set_dname(self):
+    def test_dname(self):
         dname = 'dummy_dname'
-        self.bt.set_dname(dname)
+        self.bt.dname = dname
         assert self.bt.filter_widget.dname == dname
-
-    def test_get_dname(self):
-        dname = 'dummy_dname'
-        self.bt.set_dname(dname)
-        assert self.bt.get_dname() == dname
+        assert self.bt.dname == dname
         
     def test_set_subdirectory(self):
         subdirectory = True

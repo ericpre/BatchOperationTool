@@ -4,16 +4,21 @@ Created on Wed Jul 22 11:09:50 2015
 
 @author: eric
 """
-import os, sys
+import os
+import sys
 from python_qt_binding import QtGui
 from pint import UnitRegistry
 
 import hyperspy.api as hs
-from hyperspy.misc.image_tools import contrast_stretching
+try:
+    from hyperspy.misc.image_tools import contrast_stretching
+except ImportError:
+    from hyperspy.drawing.utils import contrast_stretching
+
 
 class ConvertTIA:
     ureg = UnitRegistry()
-    
+
     def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
                  contrast_streching=False, saturated_pixels=0.4,
                  normalise=False):
@@ -40,31 +45,41 @@ class ConvertTIA:
     def convert_tia(self):
         if isinstance(self.s, list):
             for i, item in enumerate(self.s):
-                suffix = '_%s'%i
+                suffix = '_%s' % i
                 self._convert_tia_single_item(item, suffix)
         else:
             self._convert_tia_single_item(self.s)
-        
+
     def _convert_tia_single_item(self, item, suffix=''):
         kwargs = {}
         original_data = item.data.copy()
         for extension in self.extension_list:
             item.data = original_data
             if extension in ['jpg', 'jpeg'] and self.contrast_streching:
-                vmin, vmax = contrast_stretching(item.data, self.saturated_pixels)
+                vmin, vmax = contrast_stretching(
+                    item.data, self.saturated_pixels)
                 item.data = self.normalise(item.data, vmin, vmax)
             if extension in ['tif', 'tiff']:
+                self._set_convenient_scale(item)
                 kwargs = self._get_kwargs(item)
             self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
                                       '.', extension])
             if os.path.exists(self.fname_ext) and self.overwrite is None:
                 write_answer = self._ask_confirmation_overwrite()
                 self._save_data(item, overwrite=write_answer, **kwargs)
-            # workaround, currently hyperspy doesn't write file is overwrite=False 
+            # workaround, currently hyperspy doesn't write file is
+            # overwrite=False
             elif not os.path.exists(self.fname_ext):
                 self._save_data(item, **kwargs)
             else:
                 self._save_data(item, overwrite=self.overwrite, **kwargs)
+
+    def _set_convenient_scale(self, item):
+        scale, unit = self._get_scale_unit(item)
+        item.axes_manager['x'].scale = scale
+        item.axes_manager['y'].scale = scale
+        item.axes_manager['x'].units = unit
+        item.axes_manager['y'].units = unit
 
     def _get_scale_unit(self, item):
         unit = item.axes_manager['x'].units
@@ -74,10 +89,10 @@ class ConvertTIA:
 #        # Assuming the <undefined> correspond to TIA files, i. e. the units is 'm'
 #        if unit == '<undefined>':
 #            unit = 'm'
-        scale_u = item.axes_manager['x'].scale*self.ureg(unit)
-        scale, unit = self._get_convenient_scale_unit(scale_u)        
-        return scale, unit  
-        
+        scale_u = item.axes_manager['x'].scale * self.ureg(unit)
+        scale, unit = self._get_convenient_scale_unit(scale_u)
+        return scale, unit
+
     def _dm_kwargs(self, item):
         scale, unit = self._get_scale_unit(item)
         extratags = [(65003, 's', 3, unit, False),
@@ -97,10 +112,12 @@ class ConvertTIA:
 
     def _imagej_kwargs(self, item, factor=int(1E8)):
         scale, unit = self._get_scale_unit(item)
-        resolution = ((factor, int(scale*factor)), (factor, int(scale*factor)))
-        description_string = imagej_description(kwargs={"unit":unit, "scale":scale})
+        resolution = ((factor, int(scale * factor)),
+                      (factor, int(scale * factor)))
+        description_string = imagej_description(
+            kwargs={"unit": unit, "scale": scale})
         extratag = [(270, 's', 1, description_string, False)]
-        return {"resolution":resolution, "extratags":extratag}
+        return {"resolution": resolution, "extratags": extratag}
 
     def _get_kwargs(self, item):
         tag_kwargs = self._imagej_kwargs(item)
@@ -117,7 +134,7 @@ class ConvertTIA:
             else:
                 scale = scale.to(self.ureg('mm'))
             return scale.magnitude, '{}'.format(scale.units)
-        elif scale.dimensionality['[length]'] == -1.0: # for diffraction
+        elif scale.dimensionality['[length]'] == -1.0:  # for diffraction
             scale = scale.to(self.ureg('1/m'))
             if scale.magnitude > 1E6:
                 scale = scale.to(self.ureg('1/nm'))
@@ -133,13 +150,14 @@ class ConvertTIA:
     def _questionBox(self, fname, path):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle("Overwriting File?")
-        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?"%(fname, path)
+        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?" % (
+            fname, path)
         msgBox.setText(question)
         msgBox.addButton(QtGui.QMessageBox.Yes)
         msgBox.addButton(QtGui.QMessageBox.YesToAll)
         msgBox.addButton(QtGui.QMessageBox.No)
         msgBox.addButton(QtGui.QMessageBox.NoToAll)
-        return msgBox.exec_()     
+        return msgBox.exec_()
 
     def _ask_confirmation_overwrite(self):
         # Add a button to ask "Yes to all", "No to all"
@@ -162,16 +180,16 @@ class ConvertTIA:
     def _save_data(self, item, overwrite=None, **kwargs):
         # so long that skimage doesn't have the last tifffile.py library, use
         # use hyperspy one
-        use_local_tifffile = True
+        export_scale = True
         item.save(self.fname_ext, overwrite=overwrite,
-                  use_local_tifffile=use_local_tifffile, **kwargs)
+                  export_scale=export_scale, **kwargs)
 
     def normalise(self, arr, vmin=None, vmax=None):
         if vmin == None:
             vmin = arr.min()
         if vmax == None:
             vmax = arr.max()
-        return (arr.astype(float)-vmin)/(vmax-vmin)
+        return (arr.astype(float) - vmin) / (vmax - vmin)
 
 if sys.version_info[0] > 2:
     str = str, bytes
@@ -183,6 +201,7 @@ else:
     def str2bytes(s):
         return s
 
+
 def imagej_description(version='1.11a', kwargs={}):
     result = ['ImageJ=%s' % version]
     append = []
@@ -191,10 +210,10 @@ def imagej_description(version='1.11a', kwargs={}):
 
     return '\n'.join(result + append + [''])
 
-if __name__ == '__main__':        
+if __name__ == '__main__':
     fname = '10.51.36 Scanning Acquire.emi'
-    convert_TIA_file = ConvertTIA(overwrite=True)    
-    
+    convert_TIA_file = ConvertTIA(overwrite=True)
+
     s = hs.load(fname)
     convert_TIA_file.read(fname)
     convert_TIA_file.convert_tia()

@@ -12,22 +12,24 @@ import json
 import batch_operation_tool
 from batch_operation_tool.base_tab.filter_widget_base import FilterWidgetBase
 
-class BaseTab(QtGui.QWidget):    
+
+class BaseTab(QtGui.QWidget):
+
     def __init__(self, fill_tables, parent=None):
         """ Need to pass the fill_tables method from parent class"""
         super(BaseTab, self).__init__(parent=parent)
         self._initUI()
         self._init_main_parameters()
         self.fill_tables = fill_tables
-        
+
     def _initUI(self):
         self.filter_widget = FilterWidgetBase(parent=self)
-        
+
         self.SelectFolderButton = QtGui.QPushButton('Select folder', self)
         self.SubdirectoryCheckBox = QtGui.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtGui.QPushButton('Delete files', self)    
-        self.LoadConfigButton = QtGui.QPushButton('Load config', self)  
-        self.SaveConfigButton = QtGui.QPushButton('Save config', self)  
+        self.OperationApplyButton = QtGui.QPushButton('Operation', self)
+        self.LoadConfigButton = QtGui.QPushButton('Load config', self)
+        self.SaveConfigButton = QtGui.QPushButton('Save config', self)
 
         # layout
         hbox1 = QtGui.QHBoxLayout()
@@ -36,18 +38,22 @@ class BaseTab(QtGui.QWidget):
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
-        
+
         vbox = QtGui.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
         self.setLayout(vbox)
-        
+        self._connect_ui()
+
     def _connect_ui(self):
-        pass
+        self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
+        self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
+        self.LoadConfigButton.clicked.connect(self._load_config_dialog)
+        self.SaveConfigButton.clicked.connect(self._save_config_dialog)
 
     def _init_main_parameters(self, subdirectory=False):
-        self.main_parameters = {'directory':self.get_dname(),
-                                'subdirectory':subdirectory}        
+        self.main_parameters = {'directory': self.dname,
+                                'subdirectory': subdirectory}
 
     def load_config(self, fname=None):
         if fname is None:
@@ -59,7 +65,7 @@ class BaseTab(QtGui.QWidget):
         filter_parameters = config['Filter']
         self._set_main_parameters(**main_parameters)
         self.set_filter_parameters(**filter_parameters)
-    
+
     def _get_library_path(self):
         return os.path.dirname(batch_operation_tool.__file__)
 
@@ -67,31 +73,31 @@ class BaseTab(QtGui.QWidget):
         if fname is None:
             fname = os.path.join(self._get_library_path(), 'EMS_file_conversion',
                                  'default_setting.json')
-        config = {'Main':self._get_main_parameters(),
-                  'Filter':self.filter_widget.get_parameters()}
+        config = {'Main': self._get_main_parameters(),
+                  'Filter': self.filter_widget.get_parameters()}
         with open(fname, 'w') as outfile:
             json.dump(config, outfile)
-            
+
     def _set_main_parameters(self, **params):
         if params['directory'] is None:
             params['directory'] = os.getcwd()
-        self.set_dname(params['directory'])
+        self.dname = params['directory']
         self.set_subdirectory(params['subdirectory'])
 
     def _get_main_parameters(self):
-        self.main_parameters = {'directory':self.get_dname(),
-                                'subdirectory':self.get_subdirectory()}
+        self.main_parameters = {'directory': self.dname,
+                                'subdirectory': self.get_subdirectory()}
         return self.main_parameters
 
     def _update_subdirectory(self):
         self.set_subdirectory(self.SubdirectoryCheckBox.isChecked())
         self.refresh_table()
-        
+
     def get_files_lists(self):
         self.filter_widget.update_files_lists()
         self.files_to_use_list, self.files_to_ignore_list = self.filter_widget.get_files_lists()
         return self.files_to_use_list, self.files_to_ignore_list
-        
+
     def set_subdirectory(self, value):
         self.main_parameters['subdirectory'] = value
         self.SubdirectoryCheckBox.setChecked(value)
@@ -101,16 +107,19 @@ class BaseTab(QtGui.QWidget):
 
     def set_filter_parameters(self, **params):
         self.filter_widget.set_parameters(**params)
-        
-    def set_dname(self, dname):
-        self.main_parameters['directory'] = os.path.expanduser(dname)
-        self.filter_widget.set_dname(dname)
 
-    def get_dname(self):
+    @property
+    def dname(self):
         return self.filter_widget.dname
 
+    @dname.setter
+    def dname(self, value):
+        if value is not None:
+            self.main_parameters['directory'] = os.path.expanduser(value)
+        self.filter_widget.dname = value
+
     def _load_config_dialog(self):
-        dname0 = self.get_dname()
+        dname0 = self.dname
         fname = str(QtGui.QFileDialog.getOpenFileName(self, directory=dname0,
                                                       filter='*.json')[0])
         if fname is '':
@@ -119,7 +128,7 @@ class BaseTab(QtGui.QWidget):
             self.load_config(fname=fname)
 
     def _save_config_dialog(self):
-        dname0 = self.get_dname()
+        dname0 = self.dname
         fname = str(QtGui.QFileDialog.getSaveFileName(self, directory=dname0,
                                                       filter='*.json')[0])
         if fname is '':
@@ -128,11 +137,13 @@ class BaseTab(QtGui.QWidget):
             self._save_config(fname=fname)
 
     def _open_directory_dialog(self):
-        dname0 = self.get_dname()
-        dname = str(QtGui.QFileDialog.getExistingDirectory(self, directory=dname0))
+        dname0 = self.dname
+        dname = str(
+            QtGui.QFileDialog.getExistingDirectory(
+                self, directory=dname0))
         if dname is '':
             dname = dname0
-        self.set_dname(dname)
+        self.dname = dname
         self.refresh_table()
 
     def refresh_table(self):

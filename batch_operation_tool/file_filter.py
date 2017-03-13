@@ -6,10 +6,12 @@ Created on Wed Dec 23 11:38:34 2015
 """
 import os
 
+
 class FileFilter():
     """ 
     TODO: consider 'ignore_filename_extension_list'
     """
+
     def __init__(self, dname, subdirectory_bool, string_list, extension_list,
                  ignore_string_bool, ignore_string_list,
                  ignore_string_path_bool, ignore_string_path_list,
@@ -17,7 +19,7 @@ class FileFilter():
         self.dname = dname
         self.subdirectory_bool = subdirectory_bool
 
-        # parameters form the parameters dictionnary       
+        # parameters form the parameters dictionnary
         self.string_list = self._set_list(string_list)
         self.extension_list = self._set_extension_list(extension_list)
         self.ignore_string_bool = ignore_string_bool
@@ -28,11 +30,12 @@ class FileFilter():
             self.ignore_filename_extension_bool = False
         else:
             self.ignore_filename_extension_bool = ignore_filename_extension_bool
-            self.ignore_filename_extension_list = self._set_list(ignore_filename_extension_list)            
+            self.ignore_filename_extension_list = self._set_list(
+                ignore_filename_extension_list)
 
         self.files_to_use_list = []
         self.files_to_ignore_list = []
-    
+
     def _get_conditional_files_list(self, files_list, path):
         for filename in files_list:
             fullfilename = os.path.join(path, filename)
@@ -53,7 +56,7 @@ class FileFilter():
                     self.files_to_ignore_list.append(fullfilename)
             else:
                 self.files_to_ignore_list.append(fullfilename)
-                        
+
     def get_files_lists(self):
         """ Return files to use list and files to ignore list """
         self.files_to_use_list = []
@@ -63,13 +66,14 @@ class FileFilter():
             for root, subFolder, files_list in os.walk(self.dname):
                 self._get_conditional_files_list(files_list, root)
         else:
-            self._get_conditional_files_list(os.listdir(self.dname), self.dname)
+            self._get_conditional_files_list(
+                os.listdir(self.dname), self.dname)
 
         return sorted(self.files_to_use_list), sorted(self.files_to_ignore_list)
 
     def _set_extension_list(self, extension_list):
-        return [ext if '.' in ext else '.'+ext for ext in self._set_list(extension_list)]
-        
+        return [ext if '.' in ext else '.' + ext for ext in self._set_list(extension_list)]
+
     def _set_list(self, parameter):
         if isinstance(parameter, str):
             parameter = [parameter]
@@ -113,7 +117,7 @@ class FileFilter():
                     pass
         else:
             return True
-        return False # when it passes all the case in the for loop
+        return False  # when it passes all the case in the for loop
 
     def _pass_ignore_condition(self, active, string_to_check, string_list):
         """ return True for file going to files_to_use_list, when:
@@ -130,11 +134,11 @@ class FileFilter():
                     pass
         else:
             return True
-        return True # when it passes all the case in the for loop
+        return True  # when it passes all the case in the for loop
 
     def _pass_extension_condition(self, extension):
         # ignore file if ext is not in the extension_list
         for ext in self.extension_list:
             if extension == ext:
                 return True
-        return False        
+        return False

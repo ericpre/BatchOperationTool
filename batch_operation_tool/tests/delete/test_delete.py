@@ -4,7 +4,7 @@ Created on Tue Dec 22 20:39:16 2015
 
 @author: eric
 """
-import os
+import os, sys
 import nose
 from batch_operation_tool.delete.delete import delete_files_list_function
 

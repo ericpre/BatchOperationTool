@@ -13,10 +13,13 @@ from batch_operation_tool.base_tab.base_tab import BaseTab
 from batch_operation_tool.TIA_file_conversion.filter_widget import FilterWidget
 from batch_operation_tool.TIA_file_conversion.operation_widget import TIAConversionWidget
 
-class TIAConversionTab(BaseTab):    
+
+class TIAConversionTab(BaseTab):
+
     def __init__(self, fill_tables, name="TIA file conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
-        super(TIAConversionTab, self).__init__(fill_tables=fill_tables, parent=parent)
+        super(TIAConversionTab, self).__init__(
+            fill_tables=fill_tables, parent=parent)
         self.name = name
 
     def _initUI(self):
@@ -26,9 +29,9 @@ class TIAConversionTab(BaseTab):
 
         self.SelectFolderButton = QtGui.QPushButton('Select folder', self)
         self.SubdirectoryCheckBox = QtGui.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtGui.QPushButton('Convert', self)    
-        self.LoadConfigButton = QtGui.QPushButton('Load config', self)  
-        self.SaveConfigButton = QtGui.QPushButton('Save config', self)  
+        self.OperationApplyButton = QtGui.QPushButton('Convert', self)
+        self.LoadConfigButton = QtGui.QPushButton('Load config', self)
+        self.SaveConfigButton = QtGui.QPushButton('Save config', self)
 
         # layout
         hbox1 = QtGui.QHBoxLayout()
@@ -37,7 +40,7 @@ class TIAConversionTab(BaseTab):
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
-        
+
         vbox = QtGui.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
@@ -48,11 +51,11 @@ class TIAConversionTab(BaseTab):
 
     def _connect_ui(self):
         self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
-        self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)                     
+        self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
         self.OperationApplyButton.clicked.connect(self._convert)
         self.LoadConfigButton.clicked.connect(self._load_config_dialog)
         self.SaveConfigButton.clicked.connect(self._save_config_dialog)
-        
+
     def load_config(self, fname=None):
         if fname is None:
             fname = os.path.join(self._get_library_path(), 'TIA_file_conversion',
@@ -70,15 +73,15 @@ class TIAConversionTab(BaseTab):
         if fname is None:
             fname = os.path.join(self._get_library_path(), 'TIA_file_conversion',
                                  'default_setting.json')
-        config = {'Main':self._get_main_parameters(),
-                  'Filter':self.filter_widget.get_parameters(),
-                  'Operation':self.tia_conversion_widget.get_parameters()}
+        config = {'Main': self._get_main_parameters(),
+                  'Filter': self.filter_widget.get_parameters(),
+                  'Operation': self.tia_conversion_widget.get_parameters()}
         with open(fname, 'w') as outfile:
             json.dump(config, outfile)
 
     def set_operation_parameters(self, **params):
-        self.tia_conversion_widget.set_parameters(**params)   
-        
+        self.tia_conversion_widget.set_parameters(**params)
+
     def _convert(self):
         self.tia_conversion_widget.convert_file()
         self.refresh_table()

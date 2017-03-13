@@ -12,12 +12,15 @@ from batch_operation_tool.base_tab.base_tab import BaseTab
 from batch_operation_tool.EMS_file_conversion.filter_widget import FilterWidget
 from batch_operation_tool.EMS_file_conversion.operation_widget import EMSConversionWidget
 
-class EMSConversionTab(BaseTab):    
+
+class EMSConversionTab(BaseTab):
+
     def __init__(self, fill_tables, name="EMS file conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
-        super(EMSConversionTab, self).__init__(fill_tables=fill_tables, parent=parent)
+        super(EMSConversionTab, self).__init__(
+            fill_tables=fill_tables, parent=parent)
         self.name = name
-        
+
     def _initUI(self):
         self.filter_widget = FilterWidget(parent=self)
         self.ems_conversion_widget = EMSConversionWidget(get_files_list=self.get_files_lists,
@@ -25,9 +28,9 @@ class EMSConversionTab(BaseTab):
 
         self.SelectFolderButton = QtGui.QPushButton('Select folder', self)
         self.SubdirectoryCheckBox = QtGui.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtGui.QPushButton('Convert', self)    
-        self.LoadConfigButton = QtGui.QPushButton('Load config', self)  
-        self.SaveConfigButton = QtGui.QPushButton('Save config', self)  
+        self.OperationApplyButton = QtGui.QPushButton('Convert', self)
+        self.LoadConfigButton = QtGui.QPushButton('Load config', self)
+        self.SaveConfigButton = QtGui.QPushButton('Save config', self)
 
         # layout
         hbox1 = QtGui.QHBoxLayout()
@@ -36,7 +39,7 @@ class EMSConversionTab(BaseTab):
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
-        
+
         vbox = QtGui.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
@@ -47,10 +50,10 @@ class EMSConversionTab(BaseTab):
 
     def _connect_ui(self):
         self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
-        self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)                     
+        self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
         self.OperationApplyButton.clicked.connect(self._convert)
         self.LoadConfigButton.clicked.connect(self._load_config_dialog)
-        self.SaveConfigButton.clicked.connect(self._save_config_dialog)   
+        self.SaveConfigButton.clicked.connect(self._save_config_dialog)
 
     def load_config(self, fname=None):
         if fname is None:
@@ -69,15 +72,15 @@ class EMSConversionTab(BaseTab):
         if fname is None:
             fname = os.path.join(self._get_library_path(), 'EMS_file_conversion',
                                  'default_setting.json')
-        config = {'Main':self._get_main_parameters(),
-                  'Filter':self.filter_widget.get_parameters(),
-                  'Operation':self.ems_conversion_widget.get_parameters()}
+        config = {'Main': self._get_main_parameters(),
+                  'Filter': self.filter_widget.get_parameters(),
+                  'Operation': self.ems_conversion_widget.get_parameters()}
         with open(fname, 'w') as outfile:
             json.dump(config, outfile)
 
     def set_operation_parameters(self, **params):
-        self.ems_conversion_widget.set_parameters(**params)   
-        
+        self.ems_conversion_widget.set_parameters(**params)
+
     def _convert(self):
         self.ems_conversion_widget.convert_file()
         self.refresh_table()

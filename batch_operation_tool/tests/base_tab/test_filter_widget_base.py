@@ -41,7 +41,7 @@ class test_FilterWidgetBase:
         self.botui.add_tab(DeleteTab)
         self.bt = BaseTab(self.botui.fill_tables, parent=self.botui)
         self.fw = FilterWidgetBase(parent=self.bt)
-        self.fw.set_dname(self.tests_dir)
+        self.fw.dname = self.tests_dir
         self.fl_short = ['fname0.ext', 'fname1.ext', 'fname2.ext2', 'fname3.abc']
         self.fl = self._convert_file_list(sorted(self.fl_short))
 
@@ -90,9 +90,9 @@ class test_FilterWidgetBase:
         subdirectory = self.bt.get_subdirectory()
         assert subdirectory == self.fw._get_subdirectory()
         
-    def test_set_dname(self):
+    def test_dname(self):
         dname = 'dummy_dname'
-        self.fw.set_dname(dname)
+        self.fw.dname = dname
         assert self.fw.dname == dname
 
 if __name__ == '__main__':

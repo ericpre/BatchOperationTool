@@ -15,6 +15,7 @@ from batch_operation_tool.TIA_file_conversion.convert_TIA import ConvertTIA
 
 class test_ConvertTIA:
     def setUp(self):
+        self.delete_files = True
         self.parameter = {'fname':'128x128-TEM_search.emi',
                           'extension_list':['jpg'], 'overwrite':False,
                           'contrast_streching':False, 'saturated_pixels':0.4,
@@ -26,7 +27,7 @@ class test_ConvertTIA:
 
     def test_read(self):
         self.tia_reader.read(self._get_absolute_path(self.tia_reader.fname))
-        assert isinstance(self.tia_reader.s, hs.signals.Signal)
+        assert isinstance(self.tia_reader.s, hs.signals.BaseSignal)
 
     def test_set_fname(self):
         fname = 'dummy_name.emi'
@@ -48,9 +49,10 @@ class test_ConvertTIA:
         fname1 = self._get_absolute_path(fname).replace('emi', 'jpg')
         assert os.path.exists(fname0)
         assert os.path.exists(fname1)
-        os.remove(fname0)
-        os.remove(fname1)
-
+        if self.delete_files:
+            os.remove(fname0)
+            os.remove(fname1)
+            
     def test_convert_tia_list_signal(self):
         fname = '16x16_STEM_BF_DF_acquire.emi'
         self.tia_reader.read(self._get_absolute_path(fname))
@@ -60,24 +62,27 @@ class test_ConvertTIA:
         fname1 = self._get_absolute_path(fname).replace('.emi', '_1.jpg')
         assert os.path.exists(fname0)
         assert os.path.exists(fname1)
-        os.remove(fname0)
-        os.remove(fname1)
+        if self.delete_files:
+            os.remove(fname0)
+            os.remove(fname1)
 
     def test_convert_tia_single_item(self):
         self.tia_reader.contrast_streching = True
         self.tia_reader.overwrite = True
         data = np.arange(100).reshape((10,10)).astype("float")
-        self.tia_reader._convert_tia_single_item(hs.signals.Image(data))
+        self.tia_reader._convert_tia_single_item(hs.signals.Signal2D(data))
         assert os.path.exists(self.tia_reader.fname_ext)
-        os.remove(self.tia_reader.fname_ext)
+        if self.delete_files:
+            os.remove(self.tia_reader.fname_ext)
 
         self.tia_reader.contrast_streching = False
         data = np.arange(100).reshape((10,10)).astype("float")
-        self.tia_reader._convert_tia_single_item(hs.signals.Image(data))
+        self.tia_reader._convert_tia_single_item(hs.signals.Signal2D(data))
         assert os.path.exists(self.tia_reader.fname_ext)
         a = hs.load(self.tia_reader.fname_ext)
         a.data = data
-        os.remove(self.tia_reader.fname_ext)
+        if self.delete_files:
+            os.remove(self.tia_reader.fname_ext)
 
         self.tia_reader.contrast_streching = False
         self.tia_reader.read(self._get_absolute_path(self.tia_reader.fname))
@@ -87,14 +92,16 @@ class test_ConvertTIA:
         fname = self._get_absolute_path(self.tia_reader.fname.replace('.emi', ''))
         s = hs.load(fname+'.tif')
         assert_array_equal(s.data, np.load(fname+'.npy'))
-        os.remove(self.tia_reader.fname_ext)
+        if self.delete_files:
+            os.remove(self.tia_reader.fname_ext)
 
     def test_convert_tia_overwrite(self):
         self.tia_reader.overwrite = True
         self.tia_reader.read(self._get_absolute_path(self.tia_reader.fname))
         self.tia_reader.convert_tia()
         assert os.path.exists(self.tia_reader.fname_ext)
-        os.remove(self.tia_reader.fname_ext)
+        if self.delete_files:
+            os.remove(self.tia_reader.fname_ext)
         
 if __name__ == '__main__':
     nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
