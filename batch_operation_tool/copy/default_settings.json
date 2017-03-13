@@ -1,0 +1,20 @@
+{
+  "Filter": {
+    "ignore_string_path_bool": false,
+    "ignore_string_path_list": [""],
+    "extension_list": [""],
+    "string_list": [""],
+    "ignore_string_list": [""],
+    "ignore_string_bool": false,
+    "ignore_filename_extension_list": [""],
+    "ignore_filename_extension_bool": false
+  },
+  "Operation": {
+    "dest_dir": "",          
+    "keep_original": true,
+  },
+  "Main": {
+    "directory": "~",
+    "subdirectory": false
+  }
+}
