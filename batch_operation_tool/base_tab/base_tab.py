@@ -78,11 +78,12 @@ class BaseTab(QtGui.QWidget):
         with open(fname, 'w') as outfile:
             json.dump(config, outfile)
 
-    def _set_main_parameters(self, **params):
-        if params['directory'] is None:
-            params['directory'] = os.getcwd()
-        self.dname = params['directory']
-        self.set_subdirectory(params['subdirectory'])
+    def _set_main_parameters(self, directory=None, subdirectory=None):
+        if directory is None:
+            directory = os.getcwd()
+        self.dname = directory
+        if subdirectory is not None:
+            self.set_subdirectory(subdirectory)
 
     def _get_main_parameters(self):
         self.main_parameters = {'directory': self.dname,
