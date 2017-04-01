@@ -4,30 +4,27 @@ Created on Sun Dec 27 12:43:18 2015
 
 @author: eric
 """
-import sys, os
-from python_qt_binding import QtGui
-import nose
+import sys
+from qtpy import QtWidgets
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
 from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.base_tab.filter_widget_base import FilterWidgetBase
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
-from batch_operation_tool.tests.utils_tests import remove_files, get_dirname_file, \
-                    create_files, substract_lists, listdir_absolute_path
-
+from batch_operation_tool.tests.utils_tests import get_dirname_file
 from batch_operation_tool.tests.utils_tests import convert_file_list_absolute_path
 
-class test_FilterWidgetBase:
+class Test_FilterWidgetBase:
     @classmethod
     def setup_class(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtWidgets.QApplication(sys.argv)
 
     @classmethod
     def teardown_class(self):
         self.app.quit()
     
-    def setUp(self):
+    def setup_method(self):
         self.parameters = {'string_list':[''],
                            'extension_list':['ext', 'ext2', 'abc'],
                            'ignore_string_bool':False,
@@ -96,4 +93,5 @@ class test_FilterWidgetBase:
         assert self.fw.dname == dname
 
 if __name__ == '__main__':
-   nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

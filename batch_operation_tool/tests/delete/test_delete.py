@@ -4,8 +4,7 @@ Created on Tue Dec 22 20:39:16 2015
 
 @author: eric
 """
-import os, sys
-import nose
+import os
 from batch_operation_tool.delete.delete import delete_files_list_function
 
 def test_delete_files_list_function():
@@ -20,4 +19,5 @@ def test_delete_files_list_function():
     assert files_list_before == files_list_after 
 
 if __name__ == '__main__':
-    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

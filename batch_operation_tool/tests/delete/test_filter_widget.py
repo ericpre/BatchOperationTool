@@ -5,23 +5,22 @@ Created on Wed Dec 23 11:22:46 2015
 @author: eric
 """
 import sys
-from python_qt_binding import QtGui
-import nose
+from qtpy import QtWidgets
 
 from batch_operation_tool.delete.filter_widget import FilterWidget
 from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
-class test_FilterWidget:
+class Test_FilterWidget:
     @classmethod
     def setup_class(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtWidgets.QApplication(sys.argv)
 
     @classmethod
     def teardown_class(self):
         self.app.quit()
     
-    def setUp(self):
+    def setup_method(self):
         self.parameters = {'string_list':[''],
                            'extension_list':['ext', 'ext2', 'abc'],
                           'ignore_string_bool':False,
@@ -52,4 +51,5 @@ class test_FilterWidget:
         assert self.parameters == self.fw.get_parameters()
 
 if __name__ == '__main__':
-    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

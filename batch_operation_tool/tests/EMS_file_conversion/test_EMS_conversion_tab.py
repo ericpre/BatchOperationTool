@@ -5,24 +5,23 @@ Created on Sun Dec 27 14:55:06 2015
 @author: eric
 """
 import sys, os, json
-from python_qt_binding import QtGui
-import nose
+from qtpy import QtWidgets
 
 from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
 from batch_operation_tool.tests.utils_tests import get_dirname_file, merge_two_dicts
 
-class test_EMSConversionTab:
+class Test_EMSConversionTab:
     @classmethod
     def setup_class(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtWidgets.QApplication(sys.argv)
 
     @classmethod
     def teardown_class(self):
         self.app.quit()
 
-    def setUp(self):
+    def setup_method(self):
         self.filter_parameters = {'string_list':[''],
                                   'extension_list':['ext', 'ext2', 'abc'],
                                   'ignore_string_bool':False,
@@ -90,4 +89,5 @@ class test_EMSConversionTab:
         os.remove(fname)
 
 if __name__ == '__main__':
-    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

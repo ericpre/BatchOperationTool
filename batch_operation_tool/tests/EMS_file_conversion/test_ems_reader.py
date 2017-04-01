@@ -6,21 +6,20 @@ Created on Sat Dec 26 00:03:05 2015
 """
 import os, sys
 import numpy as np
-from python_qt_binding import QtGui
-import nose
+from qtpy import QtWidgets
 
 from batch_operation_tool.EMS_file_conversion.ems_reader import EMSReader
 
-class test_EMS_Reader:  
+class Test_EMS_Reader:  
     @classmethod
     def setup_class(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtWidgets.QApplication(sys.argv)
 
     @classmethod
     def teardown_class(self):
         self.app.quit()
 
-    def setUp(self):
+    def setup_method(self):
         self.parameter = {'fname':'BP-1x3x1-slice_y_0001-thickness0.388nm.ems',
                           'extension_list':['hdf5'], 'overwrite':False,
                           'log_to_linear_scale':False, 'data_type':'image'}
@@ -53,4 +52,5 @@ class test_EMS_Reader:
             assert result == False
 
 if __name__ == '__main__':
-    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

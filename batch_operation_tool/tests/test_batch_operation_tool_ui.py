@@ -6,14 +6,14 @@ Created on Thu Dec 24 20:53:25 2015
 """
 import sys, os
 from nose.tools import raises
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 from batch_operation_tool.delete.delete_tab import DeleteTab
 from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
 
-class test_BatchOperationToolUI:
-    def setUp(self):
+class Test_BatchOperationToolUI:
+    def setup_method(self):
         self.botui = BatchOperationToolUI()
         self.botui.add_tab(EMSConversionTab, name='EMS conversion tab')
         self.botui.add_tab(DeleteTab, name='Delete files')
@@ -55,13 +55,13 @@ class test_BatchOperationToolUI:
         assert type(self.botui.tab['EMS conversion tab']) == EMSConversionTab
         
     def test_create_tables_widget(self):
-        assert type(self.botui.tables_widget) == QtGui.QTabWidget
+        assert type(self.botui.tables_widget) == QtWidgets.QTabWidget
         assert self.botui.tables_widget.widget(0) == self.botui.files_table
         assert self.botui.tables_widget.widget(1) == self.botui.ignore_table
     
     def test_setup_tables(self):
-        assert type(self.botui.files_table) == QtGui.QTableWidget
-        assert type(self.botui.ignore_table) == QtGui.QTableWidget
+        assert type(self.botui.files_table) == QtWidgets.QTableWidget
+        assert type(self.botui.ignore_table) == QtWidgets.QTableWidget
 
     def test_fill_table_files(self):
         self._fill_table(self.botui.files_table)

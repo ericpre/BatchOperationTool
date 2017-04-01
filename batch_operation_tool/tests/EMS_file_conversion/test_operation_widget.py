@@ -5,23 +5,22 @@ Created on Sun Dec 27 14:57:30 2015
 @author: eric
 """
 import sys
-from python_qt_binding import QtGui
-import nose
+from qtpy import QtWidgets
 
 from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
 from batch_operation_tool.EMS_file_conversion.operation_widget import EMSConversionWidget  
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
-class test_EMSConversionWidgets:
+class Test_EMSConversionWidgets:
     @classmethod
     def setup_class(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtWidgets.QApplication(sys.argv)
 
     @classmethod
     def teardown_class(self):
         self.app.quit()
 
-    def setUp(self):
+    def setup_method(self):
         self.operation_parameters = {'extension_list':[],
                                      'data_type':'image',
                                      'log_to_linear_scale':True,
@@ -45,4 +44,5 @@ class test_EMSConversionWidgets:
         pass
     
 if __name__ == '__main__':
-    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

@@ -6,8 +6,7 @@ Created on Mon Mar 13 17:50:13 2017
 @author: eric
 """
 
-import os, sys
-import nose
+import os
 import tempfile
 from batch_operation_tool.copy.copy import copy_files
 
@@ -97,4 +96,5 @@ class TestCopy:
             assert os.listdir(os.path.join(tmp, subdir)) == []          
 
 if __name__ == '__main__':
-    nose.run(argv=[sys.argv[0], sys.modules[__name__].__file__, '-v'])
+    import pytest
+    pytest.main()

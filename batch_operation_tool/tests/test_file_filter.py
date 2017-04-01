@@ -13,8 +13,8 @@ from batch_operation_tool.tests.utils_tests import remove_files, get_dirname_fil
 
 from batch_operation_tool.tests.utils_tests import convert_file_list_absolute_path
 
-class test_Filter():
-    def setUp(self):
+class Test_Filter():
+    def setup_method(self):
         parameters = {'string_list':[''],
                       'extension_list':['ext', 'ext2', 'abc'],
                       'ignore_string_bool':False,
