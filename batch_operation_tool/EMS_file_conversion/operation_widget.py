@@ -4,12 +4,12 @@ Created on Sun Dec 20 17:16:09 2015
 
 @author: eric
 """
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 
 from batch_operation_tool.EMS_file_conversion.ems_reader import EMSReader
 
 
-class EMSConversionWidget(QtGui.QWidget):
+class EMSConversionWidget(QtWidgets.QWidget):
 
     def __init__(self, get_files_list, parent=None):
         super(EMSConversionWidget, self).__init__(parent=parent)
@@ -21,7 +21,7 @@ class EMSConversionWidget(QtGui.QWidget):
     def _init_widget(self):
         self.operation_groupBox = self._create_operation_groupBox()
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.operation_groupBox)
         self.setLayout(vbox)
 
@@ -32,18 +32,18 @@ class EMSConversionWidget(QtGui.QWidget):
                            'overwrite': False}
 
     def _create_operation_groupBox(self):
-        groupBox = QtGui.QGroupBox("EMS file conversion")
+        groupBox = QtWidgets.QGroupBox("EMS file conversion")
 
-        label1 = QtGui.QLabel('Convert to:', self)
-        self.extensionconvertionLineEdit = QtGui.QLineEdit(self)
-        self.overwriteCheckBox = QtGui.QCheckBox('Overwrite', self)
-        self.radio1 = QtGui.QRadioButton("Image")
-        self.radio2 = QtGui.QRadioButton("Wave function")
-        self.LoglinearscaleCheckBox = QtGui.QCheckBox(
+        label1 = QtWidgets.QLabel('Convert to:', self)
+        self.extensionconvertionLineEdit = QtWidgets.QLineEdit(self)
+        self.overwriteCheckBox = QtWidgets.QCheckBox('Overwrite', self)
+        self.radio1 = QtWidgets.QRadioButton("Image")
+        self.radio2 = QtWidgets.QRadioButton("Wave function")
+        self.LoglinearscaleCheckBox = QtWidgets.QCheckBox(
             'Log to linear scale', self)
         self.radio1.setChecked(True)
 
-        OperationLayout = QtGui.QGridLayout()
+        OperationLayout = QtWidgets.QGridLayout()
         # 1st column
         OperationLayout.addWidget(label1, 0, 0)
         OperationLayout.addWidget(self.radio1, 1, 0)

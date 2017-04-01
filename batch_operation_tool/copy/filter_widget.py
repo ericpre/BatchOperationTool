@@ -4,7 +4,7 @@ Created on Sun Dec 20 17:16:09 2015
 
 @author: eric
 """
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 
 from batch_operation_tool.base_tab.filter_widget_base import FilterWidgetBase
 
@@ -26,27 +26,27 @@ class FilterWidget(FilterWidgetBase):
                            'ignore_filename_extension_list': ['']}
 
     def _create_filter_groupBox(self):
-        groupBox = QtGui.QGroupBox("Filter")
+        groupBox = QtWidgets.QGroupBox("Filter")
 
-        label1 = QtGui.QLabel(
+        label1 = QtWidgets.QLabel(
             'Files containing the following string(s):', self)
-        label2 = QtGui.QLabel('With the extension(s):', self)
-        self.ignoreStringCheckBox = QtGui.QCheckBox(
+        label2 = QtWidgets.QLabel('With the extension(s):', self)
+        self.ignoreStringCheckBox = QtWidgets.QCheckBox(
             'Ignore files containing string(s):', self)
-        self.ignoreStringPathCheckBox = QtGui.QCheckBox(
+        self.ignoreStringPathCheckBox = QtWidgets.QCheckBox(
             'Ignore files with string(s) in path:', self)
 
-        self.stringLineEdit = QtGui.QLineEdit(self)
-        self.extentionLineEdit = QtGui.QLineEdit(self)
-        self.ignoreStringLineEdit = QtGui.QLineEdit(self)
-        self.ignoreStringPathLineEdit = QtGui.QLineEdit(self)
+        self.stringLineEdit = QtWidgets.QLineEdit(self)
+        self.extentionLineEdit = QtWidgets.QLineEdit(self)
+        self.ignoreStringLineEdit = QtWidgets.QLineEdit(self)
+        self.ignoreStringPathLineEdit = QtWidgets.QLineEdit(self)
 
-        self.ignorefilenameextensionCheckBox = QtGui.QCheckBox(
+        self.ignorefilenameextensionCheckBox = QtWidgets.QCheckBox(
             "Ignore if same filename doesn't exist with following extension:", self)
-        self.ignorefilenameextensionLineEdit = QtGui.QLineEdit(self)
+        self.ignorefilenameextensionLineEdit = QtWidgets.QLineEdit(self)
 
         # Layout
-        FilterLayout = QtGui.QGridLayout()
+        FilterLayout = QtWidgets.QGridLayout()
         # 1st column
         FilterLayout.addWidget(label1, 0, 0)
         FilterLayout.addWidget(label2, 1, 0)

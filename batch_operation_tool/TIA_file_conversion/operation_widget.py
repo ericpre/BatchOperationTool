@@ -4,12 +4,12 @@ Created on Sat Dec 26 15:04:58 2015
 
 @author: eric
 """
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 
 from batch_operation_tool.TIA_file_conversion.convert_TIA import ConvertTIA
 
 
-class TIAConversionWidget(QtGui.QWidget):
+class TIAConversionWidget(QtWidgets.QWidget):
 
     def __init__(self, get_files_list, parent=None):
         super(TIAConversionWidget, self).__init__(parent=parent)
@@ -21,7 +21,7 @@ class TIAConversionWidget(QtGui.QWidget):
     def _init_widget(self):
         self.operation_groupBox = self._create_operation_groupBox()
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.operation_groupBox)
         self.setLayout(vbox)
 
@@ -33,17 +33,17 @@ class TIAConversionWidget(QtGui.QWidget):
                            'normalise': False}
 
     def _create_operation_groupBox(self):
-        groupBox = QtGui.QGroupBox("TIA file conversion")
+        groupBox = QtWidgets.QGroupBox("TIA file conversion")
 
-        label1 = QtGui.QLabel('Convert to:', self)
-        self.extensionconvertionLineEdit = QtGui.QLineEdit(self)
-        self.overwriteCheckBox = QtGui.QCheckBox('Overwrite', self)
-        self.contraststrechingCheckBox = QtGui.QCheckBox(
+        label1 = QtWidgets.QLabel('Convert to:', self)
+        self.extensionconvertionLineEdit = QtWidgets.QLineEdit(self)
+        self.overwriteCheckBox = QtWidgets.QCheckBox('Overwrite', self)
+        self.contraststrechingCheckBox = QtWidgets.QCheckBox(
             'Contrast streching', self)
-        self.saturatedpixelsLineEdit = QtGui.QLineEdit(self)
-        self.normaliseCheckBox = QtGui.QCheckBox('Normalise', self)
+        self.saturatedpixelsLineEdit = QtWidgets.QLineEdit(self)
+        self.normaliseCheckBox = QtWidgets.QCheckBox('Normalise', self)
 
-        OperationLayout = QtGui.QGridLayout()
+        OperationLayout = QtWidgets.QGridLayout()
         # 1st column
         OperationLayout.addWidget(label1, 0, 0)
         OperationLayout.addWidget(self.contraststrechingCheckBox, 1, 0)

@@ -4,7 +4,7 @@ Created on Mon Dec 21 16:59:12 2015
 
 @author: eric
 """
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
 from batch_operation_tool.copy.filter_widget import FilterWidget
@@ -26,21 +26,21 @@ class CopyTab(BaseTab):
         self.copy_widget = CopyWidget(get_files_list=self.get_files_lists,
                                       parent=self)
 
-        self.SelectFolderButton = QtGui.QPushButton('Select folder', self)
-        self.SubdirectoryCheckBox = QtGui.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtGui.QPushButton('Copy files', self)
-        self.LoadConfigButton = QtGui.QPushButton('Load config', self)
-        self.SaveConfigButton = QtGui.QPushButton('Save config', self)
+        self.SelectFolderButton = QtWidgets.QPushButton('Select folder', self)
+        self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory:', self)
+        self.OperationApplyButton = QtWidgets.QPushButton('Copy files', self)
+        self.LoadConfigButton = QtWidgets.QPushButton('Load config', self)
+        self.SaveConfigButton = QtWidgets.QPushButton('Save config', self)
 
         # layout
-        hbox1 = QtGui.QHBoxLayout()
+        hbox1 = QtWidgets.QHBoxLayout()
         hbox1.addWidget(self.SelectFolderButton)
         hbox1.addWidget(self.SubdirectoryCheckBox)
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
         vbox.addWidget(self.copy_widget)
@@ -61,7 +61,7 @@ class CopyTab(BaseTab):
 
     def _copy_files(self):
         # Add dialog box to confirm?
-        #        buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        #        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         #        buttonBox.show()
         self.copy_widget.copy_files()
 

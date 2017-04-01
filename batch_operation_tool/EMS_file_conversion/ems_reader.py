@@ -16,7 +16,7 @@ import os
 import numpy as np
 import hyperspy.api as hs
 
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 """
 EMS file format: File starts with two 32 bit integers that gives the number of
             	rows and columns of the image. It is followed by the image 
@@ -88,15 +88,15 @@ class EMSReader():
                 self._save_data(overwrite=self.overwrite)
 
     def _questionBox(self, fname, path):
-        msgBox = QtGui.QMessageBox()
+        msgBox = QtWidgets.QMessageBox()
         msgBox.setWindowTitle("Overwriting File?")
         question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?" % (
             fname, path)
         msgBox.setText(question)
-        msgBox.addButton(QtGui.QMessageBox.Yes)
-        msgBox.addButton(QtGui.QMessageBox.YesToAll)
-        msgBox.addButton(QtGui.QMessageBox.No)
-        msgBox.addButton(QtGui.QMessageBox.NoToAll)
+        msgBox.addButton(QtWidgets.QMessageBox.Yes)
+        msgBox.addButton(QtWidgets.QMessageBox.YesToAll)
+        msgBox.addButton(QtWidgets.QMessageBox.No)
+        msgBox.addButton(QtWidgets.QMessageBox.NoToAll)
         return msgBox.exec_()
 
     def _ask_confirmation_overwrite(self):
@@ -104,13 +104,13 @@ class EMSReader():
         path = os.path.split(self.fname_ext)[0]
         fname = os.path.split(self.fname_ext)[1]
         questionBox = self._questionBox(fname, path)
-        if questionBox == QtGui.QMessageBox.Yes:
+        if questionBox == QtWidgets.QMessageBox.Yes:
             self.overwrite = None
             return True
-        elif questionBox == QtGui.QMessageBox.YesToAll:
+        elif questionBox == QtWidgets.QMessageBox.YesToAll:
             self.overwrite = True
             return True
-        elif questionBox == QtGui.QMessageBox.NoToAll:
+        elif questionBox == QtWidgets.QMessageBox.NoToAll:
             self.overwrite = False
             return False
         else:
@@ -142,6 +142,7 @@ if __name__ == '__main__':
     plt.colorbar()
 
     question = "Are you sure you want to exit the program?"
-    questionBox = QtGui.QMessageBox.question(None, 'Overwriting File?',
-                                             question, QtGui.QMessageBox.Yes,
-                                             QtGui.QMessageBox.No)
+    questionBox = QtWidgets.QMessageBox.question(None, 'Overwriting File?',
+                                                 question,
+                                                 QtWidgets.QMessageBox.Yes,
+                                                 QtWidgets.QMessageBox.No)

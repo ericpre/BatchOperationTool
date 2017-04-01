@@ -4,12 +4,12 @@ Created on Sat Dec 26 15:04:58 2015
 
 @author: eric
 """
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 
 from batch_operation_tool.copy.copy import copy_files
 
 
-class CopyWidget(QtGui.QWidget):
+class CopyWidget(QtWidgets.QWidget):
 
     def __init__(self, get_files_list, parent=None):
         super(CopyWidget, self).__init__(parent=parent)
@@ -21,7 +21,7 @@ class CopyWidget(QtGui.QWidget):
     def _init_widget(self):
         self.operation_groupBox = self._create_operation_groupBox()
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.operation_groupBox)
         self.setLayout(vbox)
 
@@ -30,13 +30,13 @@ class CopyWidget(QtGui.QWidget):
                            'keep_original': True}
 
     def _create_operation_groupBox(self):
-        groupBox = QtGui.QGroupBox("Copy")
+        groupBox = QtWidgets.QGroupBox("Copy")
 
-        label1 = QtGui.QLabel('Destination directory:', self)
-        self.destdirLineEdit = QtGui.QLineEdit(self)
-        self.keeporiginalCheckBox = QtGui.QCheckBox('Keep original', self)
+        label1 = QtWidgets.QLabel('Destination directory:', self)
+        self.destdirLineEdit = QtWidgets.QLineEdit(self)
+        self.keeporiginalCheckBox = QtWidgets.QCheckBox('Keep original', self)
 
-        OperationLayout = QtGui.QGridLayout()
+        OperationLayout = QtWidgets.QGridLayout()
         # 1st column
         OperationLayout.addWidget(label1, 0, 0)
         OperationLayout.addWidget(self.keeporiginalCheckBox, 1, 0)

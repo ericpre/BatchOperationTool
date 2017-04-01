@@ -14,11 +14,10 @@ TODO:
 
 import sys
 import os
-from python_qt_binding import QtGui  # new imports
-# http://cyrille.rossant.net/making-pyqt4-pyside-and-ipython-work-together/
+from qtpy import QtWidgets
 
 
-class BatchOperationToolUI(QtGui.QWidget):
+class BatchOperationToolUI(QtWidgets.QWidget):
 
     def __init__(self, window_title='Batch Operation Tool',
                  load_settings='default', parent=None):
@@ -34,7 +33,7 @@ class BatchOperationToolUI(QtGui.QWidget):
         self._create_tables_widget()
         self._create_header_tabs()
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.headers_tab)
         vbox.addWidget(self.tables_widget)
         self.setLayout(vbox)
@@ -61,19 +60,19 @@ class BatchOperationToolUI(QtGui.QWidget):
 #        self.keyPressEvent = self._delete_active_raw_on_event
 
     def _create_header_tabs(self):
-        self.headers_tab = QtGui.QTabWidget()
+        self.headers_tab = QtWidgets.QTabWidget()
         self.tab = {}
 
     def _create_tables_widget(self):
         self._setup_tables()
-        self.tables_widget = QtGui.QTabWidget()     # add tab
+        self.tables_widget = QtWidgets.QTabWidget()     # add tab
         self.tables_widget.addTab(self.files_table, "Files")
         self.tables_widget.addTab(self.ignore_table, "Ignored files")
 
     def _setup_tables(self):
-        self.files_table = QtGui.QTableWidget()
+        self.files_table = QtWidgets.QTableWidget()
         self._setup_table(self.files_table)
-        self.ignore_table = QtGui.QTableWidget()
+        self.ignore_table = QtWidgets.QTableWidget()
         self._setup_table(self.ignore_table)
 
     def _setup_table(self, table):
@@ -92,9 +91,9 @@ class BatchOperationToolUI(QtGui.QWidget):
         for i, fullfilename in enumerate(files_list):
             fulldirname, filename = os.path.split(fullfilename)
             path, dirname = os.path.split(fulldirname)
-            table.setItem(i, 0, QtGui.QTableWidgetItem(path))
-            table.setItem(i, 1, QtGui.QTableWidgetItem(dirname))
-            table.setItem(i, 2, QtGui.QTableWidgetItem(filename))
+            table.setItem(i, 0, QtWidgets.QTableWidgetItem(path))
+            table.setItem(i, 1, QtWidgets.QTableWidgetItem(dirname))
+            table.setItem(i, 2, QtWidgets.QTableWidgetItem(filename))
 
     def get_tab_with_name(self, name):
         return self.tab[name]
@@ -126,7 +125,7 @@ def get_batch_operation_widget():
 
 if __name__ == '__main__':
     sys.path.append(os.path.dirname(__file__))
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     batch_operation_widget = get_batch_operation_widget()
     batch_operation_widget.show()

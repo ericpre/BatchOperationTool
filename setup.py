@@ -10,19 +10,16 @@ if v[0] != 3:
     print(error)
     sys.exit(1)
 
-install_req = ['numpy',
-               'hyperpspy']
-               
+
 setup(name = 'Batch operation tool',
-      version = '0.2',
+      version = '0.3',
 #      scripts = [os.path.join('bin', 'myscript')],
       packages = find_packages(exclude=['tests*']),
       license = 'GPLv3',
       long_description = open('README.md').read(),
-      install_requires = [#'hyperspy >= 0.8',
-                          'hyperspy',
+      install_requires = ['hyperspy >= 1.2',
                           'pint',
-                          'python_qt_binding'],
+                          'qtpy'],
       entry_points={
               'gui_scripts': [
                       'BatchOperationToolUI=batch_operation_tool.__main__:main']},

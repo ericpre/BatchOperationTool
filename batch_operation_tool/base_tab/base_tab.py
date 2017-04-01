@@ -6,14 +6,14 @@ Created on Sat Dec 26 14:32:20 2015
 """
 
 import os
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 import json
 
 import batch_operation_tool
 from batch_operation_tool.base_tab.filter_widget_base import FilterWidgetBase
 
 
-class BaseTab(QtGui.QWidget):
+class BaseTab(QtWidgets.QWidget):
 
     def __init__(self, fill_tables, parent=None):
         """ Need to pass the fill_tables method from parent class"""
@@ -25,21 +25,21 @@ class BaseTab(QtGui.QWidget):
     def _initUI(self):
         self.filter_widget = FilterWidgetBase(parent=self)
 
-        self.SelectFolderButton = QtGui.QPushButton('Select folder', self)
-        self.SubdirectoryCheckBox = QtGui.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtGui.QPushButton('Operation', self)
-        self.LoadConfigButton = QtGui.QPushButton('Load config', self)
-        self.SaveConfigButton = QtGui.QPushButton('Save config', self)
+        self.SelectFolderButton = QtWidgets.QPushButton('Select folder', self)
+        self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory:', self)
+        self.OperationApplyButton = QtWidgets.QPushButton('Operation', self)
+        self.LoadConfigButton = QtWidgets.QPushButton('Load config', self)
+        self.SaveConfigButton = QtWidgets.QPushButton('Save config', self)
 
         # layout
-        hbox1 = QtGui.QHBoxLayout()
+        hbox1 = QtWidgets.QHBoxLayout()
         hbox1.addWidget(self.SelectFolderButton)
         hbox1.addWidget(self.SubdirectoryCheckBox)
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
         self.setLayout(vbox)
@@ -121,7 +121,7 @@ class BaseTab(QtGui.QWidget):
 
     def _load_config_dialog(self):
         dname0 = self.dname
-        fname = str(QtGui.QFileDialog.getOpenFileName(self, directory=dname0,
+        fname = str(QtWidgets.QFileDialog.getOpenFileName(self, directory=dname0,
                                                       filter='*.json')[0])
         if fname is '':
             return
@@ -130,7 +130,7 @@ class BaseTab(QtGui.QWidget):
 
     def _save_config_dialog(self):
         dname0 = self.dname
-        fname = str(QtGui.QFileDialog.getSaveFileName(self, directory=dname0,
+        fname = str(QtWidgets.QFileDialog.getSaveFileName(self, directory=dname0,
                                                       filter='*.json')[0])
         if fname is '':
             return
@@ -140,7 +140,7 @@ class BaseTab(QtGui.QWidget):
     def _open_directory_dialog(self):
         dname0 = self.dname
         dname = str(
-            QtGui.QFileDialog.getExistingDirectory(
+            QtWidgets.QFileDialog.getExistingDirectory(
                 self, directory=dname0))
         if dname is '':
             dname = dname0

@@ -5,7 +5,7 @@ Created on Mon Dec 21 16:59:12 2015
 @author: eric
 """
 import os
-from python_qt_binding import QtGui
+from qtpy import QtWidgets
 import json
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
@@ -26,21 +26,21 @@ class EMSConversionTab(BaseTab):
         self.ems_conversion_widget = EMSConversionWidget(get_files_list=self.get_files_lists,
                                                          parent=self)
 
-        self.SelectFolderButton = QtGui.QPushButton('Select folder', self)
-        self.SubdirectoryCheckBox = QtGui.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtGui.QPushButton('Convert', self)
-        self.LoadConfigButton = QtGui.QPushButton('Load config', self)
-        self.SaveConfigButton = QtGui.QPushButton('Save config', self)
+        self.SelectFolderButton = QtWidgets.QPushButton('Select folder', self)
+        self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory:', self)
+        self.OperationApplyButton = QtWidgets.QPushButton('Convert', self)
+        self.LoadConfigButton = QtWidgets.QPushButton('Load config', self)
+        self.SaveConfigButton = QtWidgets.QPushButton('Save config', self)
 
         # layout
-        hbox1 = QtGui.QHBoxLayout()
+        hbox1 = QtWidgets.QHBoxLayout()
         hbox1.addWidget(self.SelectFolderButton)
         hbox1.addWidget(self.SubdirectoryCheckBox)
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
         vbox.addWidget(self.ems_conversion_widget)
