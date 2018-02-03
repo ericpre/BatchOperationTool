@@ -43,8 +43,8 @@ class EMSReader():
 
     def open_jems_wavefuntion(self, fname):
         with open(fname) as f:
-            rows = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')
-            columns = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')
+            rows = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')[0]
+            columns = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')[0]
             real_part = np.fromfile(
                 f, dtype=np.float32, count=rows * columns).newbyteorder('>').reshape((rows, columns))
             f.read(4)
@@ -55,8 +55,8 @@ class EMSReader():
 
     def open_jems_single_image(self, fname):
         with open(fname) as f:
-            rows = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')
-            columns = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')
+            rows = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')[0]
+            columns = np.fromfile(f, dtype=np.int32, count=1).newbyteorder('>')[0]
             ima = np.fromfile(f, dtype=np.float32, count=rows *
                               columns).newbyteorder('>').reshape((rows, columns))
 
