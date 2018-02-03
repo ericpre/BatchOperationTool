@@ -117,6 +117,10 @@ def get_batch_operation_widget():
     from batch_operation_tool.TIA_file_conversion.TIA_conversion_tab import TIAConversionTab
     batch_operation_widget.add_tab(TIAConversionTab)
 
+    # Add bin conversion tab
+    from batch_operation_tool.bin_file_conversion.bin_conversion_tab import BinConversionTab
+    batch_operation_widget.add_tab(BinConversionTab)
+
     # Add copy tab
     from batch_operation_tool.copy.copy_tab import CopyTab
     batch_operation_widget.add_tab(CopyTab)

@@ -1,0 +1,24 @@
+{
+  "Filter": {
+    "ignore_string_path_bool": false,
+    "ignore_string_path_list": [""],
+    "extension_list": ["bin"],
+    "string_list": ["DiffPlaneTotal"],
+    "ignore_string_list": [""],
+    "ignore_string_bool": false,
+    "ignore_filename_extension_list": [""],
+    "ignore_filename_extension_bool": false
+  },
+  "Operation": {
+    "extension_list": ["jpg", "tif"],
+    "overwrite": false,
+    "contrast_streching": true,
+    "saturated_pixels": 0.4,
+    "normalise": true,
+    "save_stack": true
+  },
+  "Main": {
+    "directory": "~",
+    "subdirectory": false
+  }
+}
