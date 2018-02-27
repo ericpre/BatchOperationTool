@@ -8,6 +8,7 @@ import os
 import sys
 from qtpy import QtWidgets
 from pint import UnitRegistry
+import traits.api as t
 
 import hyperspy.api as hs
 try:
@@ -56,10 +57,14 @@ class ConvertTIA:
         for extension in self.extension_list:
             item.data = original_data
             if extension in ['jpg', 'jpeg'] and self.contrast_streching:
+                if isinstance(item, hs.signals.Signal1D):
+                    return
                 vmin, vmax = contrast_stretching(
                     item.data, self.saturated_pixels)
                 item.data = self.normalise(item.data, vmin, vmax)
             if extension in ['tif', 'tiff']:
+                if isinstance(item, hs.signals.Signal1D):
+                    return
                 self._set_convenient_scale(item)
                 kwargs = self._get_kwargs(item)
             self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
@@ -83,6 +88,9 @@ class ConvertTIA:
 
     def _get_scale_unit(self, item):
         unit = item.axes_manager['x'].units
+        if unit == t.Undefined:
+            # do nothing
+            return item.axes_manager['x'].scale, item.axes_manager['x'].units
         if unit == '\xb5m':
             unit = 'um'
 #        # workaround for some of the TIA files...
@@ -178,11 +186,14 @@ class ConvertTIA:
             return False
 
     def _save_data(self, item, overwrite=None, **kwargs):
-        # so long that skimage doesn't have the last tifffile.py library, use
-        # use hyperspy one
-        export_scale = True
-        item.save(self.fname_ext, overwrite=overwrite,
-                  export_scale=export_scale, **kwargs)
+        try:
+            item.save(self.fname_ext, overwrite=overwrite, **kwargs)
+        except IOError:
+            # In case the format is not supported, fall back to hspy format
+            # Add an option to do that
+            fname = os.path.splitext(self.fname_ext)
+            item.save('{}.hspy'.format(fname[0]),
+                      overwrite=overwrite, **kwargs)
 
     def normalise(self, arr, vmin=None, vmax=None):
         if vmin == None:
@@ -190,6 +201,7 @@ class ConvertTIA:
         if vmax == None:
             vmax = arr.max()
         return (arr.astype(float) - vmin) / (vmax - vmin)
+
 
 if sys.version_info[0] > 2:
     str = str, bytes
@@ -209,6 +221,7 @@ def imagej_description(version='1.11a', kwargs={}):
         append.append('%s=%s' % (key.lower(), value))
 
     return '\n'.join(result + append + [''])
+
 
 if __name__ == '__main__':
     fname = '10.51.36 Scanning Acquire.emi'
