@@ -6,7 +6,7 @@ Created on Sat Dec 26 17:26:46 2015
 """
 import os
 import numpy as np
-from numpy.testing import assert_array_equal
+import numpy.testing as nt
 import hyperspy.api as hs
 
 from batch_operation_tool.TIA_file_conversion.convert_TIA import ConvertTIA
@@ -35,7 +35,7 @@ class Test_ConvertTIA:
     def test_get_scale_unit(self):
         self.tia_reader.read(self._get_absolute_path(self.tia_reader.fname))
         a = self.tia_reader._get_scale_unit(self.tia_reader.s)
-        assert a[0] == 0.005261
+        nt.assert_allclose(a[0], 0.005261, rtol=1e-4)
         assert a[1] == 'micrometer'        
 
     def test_convert_tia_list_extention(self):
@@ -89,7 +89,7 @@ class Test_ConvertTIA:
         assert os.path.exists(self.tia_reader.fname_ext)
         fname = self._get_absolute_path(self.tia_reader.fname.replace('.emi', ''))
         s = hs.load(fname+'.tif')
-        assert_array_equal(s.data, np.load(fname+'.npy'))
+        nt.assert_array_equal(s.data, np.load(fname+'.npy'))
         if self.delete_files:
             os.remove(self.tia_reader.fname_ext)
 

@@ -52,7 +52,6 @@ class ConvertTIA:
             self._convert_tia_single_item(self.s)
 
     def _convert_tia_single_item(self, item, suffix=''):
-        kwargs = {}
         original_data = item.data.copy()
         for extension in self.extension_list:
             item.data = original_data
@@ -66,18 +65,17 @@ class ConvertTIA:
                 if isinstance(item, hs.signals.Signal1D):
                     return
                 self._set_convenient_scale(item)
-                kwargs = self._get_kwargs(item)
             self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
                                       '.', extension])
             if os.path.exists(self.fname_ext) and self.overwrite is None:
                 write_answer = self._ask_confirmation_overwrite()
-                self._save_data(item, overwrite=write_answer, **kwargs)
+                self._save_data(item, overwrite=write_answer)
             # workaround, currently hyperspy doesn't write file is
             # overwrite=False
             elif not os.path.exists(self.fname_ext):
-                self._save_data(item, **kwargs)
+                self._save_data(item)
             else:
-                self._save_data(item, overwrite=self.overwrite, **kwargs)
+                self._save_data(item, overwrite=self.overwrite)
 
     def _set_convenient_scale(self, item):
         scale, unit = self._get_scale_unit(item)
@@ -100,37 +98,6 @@ class ConvertTIA:
         scale_u = item.axes_manager['x'].scale * self.ureg(unit)
         scale, unit = self._get_convenient_scale_unit(scale_u)
         return scale, unit
-
-    def _dm_kwargs(self, item):
-        scale, unit = self._get_scale_unit(item)
-        extratags = [(65003, 's', 3, unit, False),
-                     (65004, 's', 3, unit, False),
-                     (65006, 'd', 1, 0.0, False),
-                     (65007, 'd', 1, 0.0, False),
-                     (65009, 'd', 1, float(scale), False),
-                     (65010, 'd', 1, float(scale), False),
-                     (65012, 's', 3, unit, False),
-                     (65013, 's', 3, unit, False),
-                     (65015, 'i', 1, 1, False),
-                     (65016, 'i', 1, 1, False),
-                     (65024, 'd', 1, 0.0, False),
-                     (65025, 'd', 1, 1.0, False),
-                     (65026, 'i', 1, 1, False)]
-        return extratags
-
-    def _imagej_kwargs(self, item, factor=int(1E8)):
-        scale, unit = self._get_scale_unit(item)
-        resolution = ((factor, int(scale * factor)),
-                      (factor, int(scale * factor)))
-        description_string = imagej_description(
-            kwargs={"unit": unit, "scale": scale})
-        extratag = [(270, 's', 1, description_string, False)]
-        return {"resolution": resolution, "extratags": extratag}
-
-    def _get_kwargs(self, item):
-        tag_kwargs = self._imagej_kwargs(item)
-        tag_kwargs["extratags"].extend(self._dm_kwargs(item))
-        return tag_kwargs
 
     def _get_convenient_scale_unit(self, scale):
         if scale.dimensionality['[length]'] == 1.0:
