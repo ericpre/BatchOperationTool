@@ -2,6 +2,8 @@
 
 from setuptools import setup, find_packages
 
+from batch_operation_tool import __version__ as version
+
 import sys
 v = sys.version_info
 if v[0] != 3:
@@ -12,7 +14,7 @@ if v[0] != 3:
 
 
 setup(name = 'Batch operation tool',
-      version = '0.3',
+      version = version,
 #      scripts = [os.path.join('bin', 'myscript')],
       packages = find_packages(exclude=['tests*']),
       license = 'GPLv3',
