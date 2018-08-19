@@ -9,7 +9,7 @@ import sys
 from qtpy import QtWidgets
 from pint import UnitRegistry
 import traits.api as t
-
+import numpy as np
 import hyperspy.api as hs
 try:
     from hyperspy.misc.image_tools import contrast_stretching
@@ -60,11 +60,16 @@ class ConvertTIA:
                     return
                 vmin, vmax = contrast_stretching(
                     item.data, self.saturated_pixels)
-                item.data = self.normalise(item.data, vmin, vmax)
+                item.data = self.stretch_contrast(item.data, vmin, vmax)
             if extension in ['tif', 'tiff']:
                 if isinstance(item, hs.signals.Signal1D):
                     return
                 self._set_convenient_scale(item)
+                if self.normalisation:
+                    # dirty workaround to read tif file in imagej and dm...
+                    item.data = self.normalise(item.data)
+                    item.data *= np.iinfo(np.int32).max
+                    item.change_dtype(np.int32)
             self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
                                       '.', extension])
             if os.path.exists(self.fname_ext) and self.overwrite is None:
@@ -161,6 +166,11 @@ class ConvertTIA:
             fname = os.path.splitext(self.fname_ext)
             item.save('{}.hspy'.format(fname[0]),
                       overwrite=overwrite, **kwargs)
+
+    def stretch_contrast(self, arr, vmin, vmax):
+        arr[np.where(arr<vmin)] = vmin
+        arr[np.where(arr>vmax)] = vmax
+        return arr
 
     def normalise(self, arr, vmin=None, vmax=None):
         if vmin == None:

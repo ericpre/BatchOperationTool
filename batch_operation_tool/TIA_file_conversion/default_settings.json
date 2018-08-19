@@ -2,8 +2,8 @@
   "Filter": {
     "ignore_string_path_bool": false,
     "ignore_string_path_list": [""],
-    "extension_list": ["emi"],
-    "string_list": ["Acquire"],
+    "extension_list": ["emi, emd"],
+    "string_list": [""],
     "ignore_string_list": [""],
     "ignore_string_bool": false,
     "ignore_filename_extension_list": [""],
