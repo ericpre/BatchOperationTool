@@ -19,7 +19,7 @@ setup(name = 'Batch operation tool',
       packages = find_packages(exclude=['tests*']),
       license = 'GPLv3',
       long_description = open('README.md').read(),
-      install_requires = ['hyperspy >= 1.2',
+      install_requires = ['hyperspy >= 1.4',
                           'pint',
                           'qtpy'],
       entry_points={

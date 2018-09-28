@@ -9,10 +9,7 @@ from qtpy import QtWidgets
 import numpy as np
 
 import hyperspy.api as hs
-try:
-    from hyperspy.misc.image_tools import contrast_stretching
-except ImportError:
-    from hyperspy.drawing.utils import contrast_stretching
+from hyperspy.drawing.utils import contrast_stretching
 
 
 class ConvertBin:

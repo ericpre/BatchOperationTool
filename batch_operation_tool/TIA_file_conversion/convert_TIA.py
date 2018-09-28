@@ -11,10 +11,7 @@ from pint import UnitRegistry
 import traits.api as t
 import numpy as np
 import hyperspy.api as hs
-try:
-    from hyperspy.misc.image_tools import contrast_stretching
-except ImportError:
-    from hyperspy.drawing.utils import contrast_stretching
+from hyperspy.drawing.utils import contrast_stretching
 
 
 class ConvertTIA:
@@ -43,11 +40,18 @@ class ConvertTIA:
             self.fname = fname
         self.s = hs.load(fname)
 
+    @property
+    def is_velox_emd(self):
+        if os.path.splitext(self.fname)[1] == '.emd':
+            return True
+        else:
+            return False
+
     def convert_tia(self):
         if isinstance(self.s, list):
             for i, item in enumerate(self.s):
-                suffix = '_%s' % i
-                self._convert_tia_single_item(item, suffix)
+                suffix = item.metadata.General.title if self.is_velox_emd else i
+                self._convert_tia_single_item(item, '_{}'.format(suffix))
         else:
             self._convert_tia_single_item(self.s)
 
