@@ -26,7 +26,5 @@ setup(name = 'Batch operation tool',
               'gui_scripts': [
                       'BatchOperationToolUI=batch_operation_tool.__main__:main']},
       package_data={'batch_operation_tool':
-          ['delete/*.json',
-           'EMS_file_conversion/*.json',
-           'TIA_file_conversion/*.json']},
+          ['*/*.json',]},
       )
