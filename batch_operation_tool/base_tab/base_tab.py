@@ -6,10 +6,11 @@ Created on Sat Dec 26 14:32:20 2015
 """
 
 import os
-from qtpy import QtWidgets
+from qtpy import QtWidgets, QtCore
 import json
 
 import batch_operation_tool
+from batch_operation_tool.progressbar import ThreadedProgressBar
 from batch_operation_tool.base_tab.filter_widget_base import FilterWidgetBase
 
 
@@ -150,3 +151,28 @@ class BaseTab(QtWidgets.QWidget):
     def refresh_table(self):
         self.get_files_lists()
         self.fill_tables()
+
+    def run_threaded_process(self, files_list, function):
+        process_thread = ProcessThread(self, files_list, function)
+        progressbarWidget = ThreadedProgressBar(self, process_thread)
+        # progressbarWidget.move(300, 300)
+        progressbarWidget.show()
+        progressbarWidget.thread.start()
+
+
+class ProcessThread(QtCore.QThread):
+
+    update = QtCore.Signal()
+
+    def __init__(self, parent, files_list, function):
+        super().__init__(parent)
+        self.parent = parent
+        self.files_list = files_list
+        self.function = function
+
+    def run(self):
+        for i, filename in enumerate(self.files_list):
+            print('Delete file #%i: %s' % (i, filename))
+            self.function(filename)
+            self.parent.refresh_table()
+            self.update.emit()

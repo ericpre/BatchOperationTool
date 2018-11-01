@@ -66,8 +66,11 @@ class FileFilter():
             for root, subFolder, files_list in os.walk(self.dname):
                 self._get_conditional_files_list(files_list, root)
         else:
-            self._get_conditional_files_list(
-                os.listdir(self.dname), self.dname)
+            try:
+                list_dir = os.listdir(self.dname)
+            except FileNotFoundError:
+                print("No such directory: '{}'".format(self.dname))
+            self._get_conditional_files_list(list_dir, self.dname)
 
         return sorted(self.files_to_use_list), sorted(self.files_to_ignore_list)
 

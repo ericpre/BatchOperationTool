@@ -4,11 +4,12 @@ Created on Mon Dec 21 16:59:12 2015
 
 @author: eric
 """
+import os
+
 from qtpy import QtWidgets
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
 from batch_operation_tool.delete.filter_widget import FilterWidget
-from batch_operation_tool.delete.delete import delete_files_list_function
 
 
 class DeleteTab(BaseTab):
@@ -54,5 +55,6 @@ class DeleteTab(BaseTab):
         #        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         #        buttonBox.show()
         files_list = self.get_files_lists()[0]
-        delete_files_list_function(files_list)
-        self.refresh_table()
+        function = os.remove
+        self.run_threaded_process(files_list, function)
+ 
