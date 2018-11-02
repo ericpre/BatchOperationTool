@@ -172,7 +172,11 @@ class ProcessThread(QtCore.QThread):
 
     def run(self):
         for i, filename in enumerate(self.files_list):
-            print('Delete file #%i: %s' % (i, filename))
-            self.function(filename)
+            print('Process file #%i: %s' % (i, filename))
+            try:
+                self.function(filename)
+            except:
+                self.finished.emit()
+                print('Error')
             self.parent.refresh_table()
             self.update.emit()

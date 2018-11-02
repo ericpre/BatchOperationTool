@@ -52,7 +52,7 @@ class TIAConversionTab(BaseTab):
     def _connect_ui(self):
         self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
         self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
-        self.OperationApplyButton.clicked.connect(self._convert)
+        self.OperationApplyButton.clicked.connect(self._convert_files)
         self.LoadConfigButton.clicked.connect(self._load_config_dialog)
         self.SaveConfigButton.clicked.connect(self._save_config_dialog)
 
@@ -82,6 +82,11 @@ class TIAConversionTab(BaseTab):
     def set_operation_parameters(self, **params):
         self.tia_conversion_widget.set_parameters(**params)
 
-    def _convert(self):
-        self.tia_conversion_widget.convert_file()
-        self.refresh_table()
+    def _convert_files(self):
+        # Add dialog box to confirm?
+        #        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        #        buttonBox.show()
+        self.tia_conversion_widget._setup_conversation()
+        files_list = self.get_files_lists()[0]
+        function = self.tia_conversion_widget.convert_file
+        self.run_threaded_process(files_list, function)

@@ -56,5 +56,4 @@ class DeleteTab(BaseTab):
         #        buttonBox.show()
         files_list = self.get_files_lists()[0]
         function = os.remove
-        self.run_threaded_process(files_list, function)
- 
+        self.run_threaded_process(files_list, function) 
