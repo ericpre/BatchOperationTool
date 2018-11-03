@@ -152,10 +152,12 @@ class BaseTab(QtWidgets.QWidget):
         self.get_files_lists()
         self.fill_tables()
 
+    def update_table_processed_file(self, file_list):
+        self.fill_tables(file_list)
+
     def run_threaded_process(self, files_list, function):
         process_thread = ProcessThread(self, files_list, function)
         progressbarWidget = ThreadedProgressBar(self, process_thread)
-        # progressbarWidget.move(300, 300)
         progressbarWidget.show()
         progressbarWidget.thread.start()
 
@@ -171,12 +173,15 @@ class ProcessThread(QtCore.QThread):
         self.function = function
 
     def run(self):
+        file_list = self.files_list.copy()
+        print(file_list)
         for i, filename in enumerate(self.files_list):
             print('Process file #%i: %s' % (i, filename))
             try:
                 self.function(filename)
+                file_list.remove(filename)
             except:
-                self.finished.emit()
-                print('Error')
-            self.parent.refresh_table()
+                print('Error with file:', filename)
+            self.parent.update_table_processed_file(file_list)
             self.update.emit()
+        self.finished.emit()

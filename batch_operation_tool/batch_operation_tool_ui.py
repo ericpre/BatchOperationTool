@@ -80,7 +80,10 @@ class BatchOperationToolUI(QtWidgets.QWidget):
         table.horizontalHeader().setStretchLastSection(True)
         table.setHorizontalHeaderLabels(['Path', 'Directory', 'File'])
 
-    def fill_tables(self):
+    def fill_tables(self, file_list=None):
+        if file_list is not None and type(file_list) is list:
+            self._fill_table(self.files_table, file_list)
+            return
         current_tab_widget = self._get_current_tab_widget()
         (file_to_use_list, files_to_ignore_list) = current_tab_widget.get_files_lists()
         self._fill_table(self.files_table, file_to_use_list)
