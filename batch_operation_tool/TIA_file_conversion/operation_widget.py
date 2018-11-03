@@ -82,7 +82,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.parameters['normalise'] = self.normaliseCheckBox.isChecked()
         return self.parameters
 
-    def _setup_conversation(self):
+    def _setup_conversion(self):
         self.convert_tia = ConvertTIA(**self.get_parameters())
 
     def convert_file(self, fname):

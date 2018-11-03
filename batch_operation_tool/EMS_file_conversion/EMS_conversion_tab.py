@@ -51,7 +51,7 @@ class EMSConversionTab(BaseTab):
     def _connect_ui(self):
         self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
         self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
-        self.OperationApplyButton.clicked.connect(self._convert)
+        self.OperationApplyButton.clicked.connect(self._convert_files)
         self.LoadConfigButton.clicked.connect(self._load_config_dialog)
         self.SaveConfigButton.clicked.connect(self._save_config_dialog)
 
@@ -84,3 +84,9 @@ class EMSConversionTab(BaseTab):
     def _convert(self):
         self.ems_conversion_widget.convert_file()
         self.refresh_table()
+
+    def _convert_files(self):
+        self.ems_conversion_widget._setup_conversion()
+        files_list = self.get_files_lists()[0]
+        function = self.ems_conversion_widget.convert_file
+        self.run_threaded_process(files_list, function)

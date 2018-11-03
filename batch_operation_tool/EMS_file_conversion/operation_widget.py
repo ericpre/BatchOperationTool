@@ -82,9 +82,9 @@ class EMSConversionWidget(QtWidgets.QWidget):
             'log_to_linear_scale'] = self.LoglinearscaleCheckBox.isChecked()
         return self.parameters
 
-    def convert_file(self):
-        files_list = self.get_files_list()[0]
-        ems_reader = EMSReader(**self.get_parameters())
-        for fname in files_list:
-            ems_reader.read(fname)
-            ems_reader.convert_ems()
+    def _setup_conversion(self):
+        self.ems_reader = EMSReader(**self.get_parameters())
+
+    def convert_file(self, fname):
+        self.ems_reader.read(fname)
+        self.ems_reader.convert_ems()

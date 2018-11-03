@@ -86,7 +86,7 @@ class TIAConversionTab(BaseTab):
         # Add dialog box to confirm?
         #        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         #        buttonBox.show()
-        self.tia_conversion_widget._setup_conversation()
+        self.tia_conversion_widget._setup_conversion()
         files_list = self.get_files_lists()[0]
         function = self.tia_conversion_widget.convert_file
         self.run_threaded_process(files_list, function)
