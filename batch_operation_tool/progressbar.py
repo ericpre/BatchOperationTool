@@ -44,7 +44,7 @@ class ThreadedProgressBar(QtWidgets.QProgressDialog):
         self.setValue(self.n)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     thread = Thread(parent=None, n=100)
     progressWidget = ThreadedProgressBar(None, thread)
