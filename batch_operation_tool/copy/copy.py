@@ -8,23 +8,26 @@ import os
 import shutil
 
 
-def copy_files(files_list, dest_dir, keep_original=True):
-    makedir(dest_dir)
-    # remove filename in dest_dir from files_list
-    files_list = [fname for fname in files_list if dest_dir not in fname]
-    string = 'Moving'
-    if keep_original:
-        string = 'Copying'
-    for i, filename in enumerate(files_list):
-        print('%s file #%i: %s' % (string, i, filename))
-        common_path = os.path.commonpath([filename, dest_dir])
-        dest_subdir = filename.split(common_path)[1][1:]
-        kwargs = {'src': filename,
-                  'dst': os.path.join(dest_dir, dest_subdir)}
+class CopyFiles:
+
+    def __init__(self, dest_dir=None, keep_original=True):
+        self.dest_dir = dest_dir
+        self.keep_original = keep_original
+        self.fname = None
+
+    def copy_file(self):
+        if self.fname is None:
+            # Filename needs to be set when calling this method
+            raise ValueError("Filename error, please report the issue")
+        makedir(self.dest_dir)
+        common_path = os.path.commonpath([self.fname, self.dest_dir])
+        dest_subdir = self.fname.split(common_path)[1][1:]
+        kwargs = {'src': self.fname,
+                  'dst': os.path.join(self.dest_dir, dest_subdir)}
         path_split = os.path.split(dest_subdir)[0]
         if len(path_split) > 0:
-            makedir(os.path.join(dest_dir, path_split))
-        if keep_original:
+            makedir(os.path.join(self.dest_dir, path_split))
+        if self.keep_original:
             shutil.copy(**kwargs)
         else:
             shutil.move(**kwargs)

@@ -8,11 +8,11 @@ Created on Mon Mar 13 17:50:13 2017
 
 import os
 import tempfile
-from batch_operation_tool.copy.copy import copy_files
+from batch_operation_tool.copy.copy import CopyFiles
 
 
-class TestCopy:
-    
+class TestCopyFiles:
+
     def test_copy_files_keep_original(self):
 
         with tempfile.TemporaryDirectory() as tmp:           
@@ -26,9 +26,10 @@ class TestCopy:
             dest_dir = os.path.join(tmp, 'copy_there')
             os.makedirs(dest_dir)
 
-            copy_files(files_list,
-                       dest_dir=dest_dir,
-                       keep_original=True)
+            copy = CopyFiles(dest_dir=dest_dir, keep_original=True)
+            for fname in files_list:
+                copy.fname = fname
+                copy.copy_file()
             assert os.listdir(dest_dir) == files_list_original
             files_list_original.insert(0, 'copy_there')
             assert os.listdir(tmp) == files_list_original
@@ -46,13 +47,15 @@ class TestCopy:
             dest_dir = os.path.join(tmp, 'copy_there')
             os.makedirs(dest_dir)
 
-            copy_files(files_list,
-                       dest_dir=dest_dir,
-                       keep_original=False)
+            copy = CopyFiles(dest_dir=dest_dir, keep_original=False)
+            for fname in files_list:
+                copy.fname = fname
+                copy.copy_file()
+
             assert os.listdir(dest_dir) == files_list_original
             assert os.listdir(tmp) == ['copy_there'] 
 
-    
+
     def test_copy_files_keep_original_subfolder(self):
 
         with tempfile.TemporaryDirectory() as tmp:           
@@ -68,9 +71,11 @@ class TestCopy:
             dest_dir = os.path.join(tmp, 'copy_there')
             os.makedirs(dest_dir)
 
-            copy_files(files_list,
-                       dest_dir=dest_dir,
-                       keep_original=True)
+            copy = CopyFiles(dest_dir=dest_dir, keep_original=True)
+            for fname in files_list:
+                copy.fname = fname
+                copy.copy_file()
+
             assert os.listdir(os.path.join(dest_dir, subdir)) == files_list_original
             assert os.listdir(os.path.join(tmp, subdir)) == files_list_original
 
@@ -89,9 +94,11 @@ class TestCopy:
             dest_dir = os.path.join(tmp, 'copy_there')
             os.makedirs(dest_dir)
 
-            copy_files(files_list,
-                       dest_dir=dest_dir,
-                       keep_original=False)
+            copy = CopyFiles(dest_dir=dest_dir, keep_original=False)
+            for fname in files_list:
+                copy.fname = fname
+                copy.copy_file()
+
             assert os.listdir(os.path.join(dest_dir, subdir)) == files_list_original
             assert os.listdir(os.path.join(tmp, subdir)) == []          
 

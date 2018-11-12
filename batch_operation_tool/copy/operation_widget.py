@@ -6,7 +6,7 @@ Created on Sat Dec 26 15:04:58 2015
 """
 from qtpy import QtWidgets
 
-from batch_operation_tool.copy.copy import copy_files
+from batch_operation_tool.copy.copy import CopyFiles
 
 
 class CopyWidget(QtWidgets.QWidget):
@@ -59,7 +59,9 @@ class CopyWidget(QtWidgets.QWidget):
             'keep_original'] = self.keeporiginalCheckBox.isChecked()
         return self.parameters
 
-    def copy_files(self):
-        self.get_parameters()
-        files_list = self.get_files_list()[0]
-        copy_files(files_list, **self.get_parameters())
+    def _setup_conversion(self):
+        self.copy_files = CopyFiles(**self.get_parameters())
+
+    def copy_file(self, fname):
+        self.copy_files.fname = fname
+        self.copy_files.copy_file()

@@ -60,6 +60,7 @@ class CopyTab(BaseTab):
         self.OperationApplyButton.clicked.connect(self._copy_files)
 
     def _copy_files(self):
+        self.copy_widget._setup_conversion()
         files_list = self.get_files_lists()[0]
         function = self.copy_widget.copy_file
         self.run_threaded_process(files_list, function)
