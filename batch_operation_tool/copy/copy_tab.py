@@ -60,9 +60,6 @@ class CopyTab(BaseTab):
         self.OperationApplyButton.clicked.connect(self._copy_files)
 
     def _copy_files(self):
-        # Add dialog box to confirm?
-        #        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
-        #        buttonBox.show()
-        self.copy_widget.copy_files()
-
-        self.refresh_table()
+        files_list = self.get_files_lists()[0]
+        function = self.copy_widget.copy_file
+        self.run_threaded_process(files_list, function)

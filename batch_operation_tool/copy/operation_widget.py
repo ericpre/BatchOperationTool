@@ -63,8 +63,3 @@ class CopyWidget(QtWidgets.QWidget):
         self.get_parameters()
         files_list = self.get_files_list()[0]
         copy_files(files_list, **self.get_parameters())
-
-#        convert_tia = ConvertTIA(**self.get_parameters())
-#        for fname in files_list:
-#            convert_tia.read(fname)
-#            convert_tia.convert_tia()

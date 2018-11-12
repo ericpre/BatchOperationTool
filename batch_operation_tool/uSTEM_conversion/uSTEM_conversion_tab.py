@@ -10,22 +10,22 @@ from qtpy import QtWidgets
 import json
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
-from batch_operation_tool.bin_file_conversion.filter_widget import FilterWidget
-from batch_operation_tool.bin_file_conversion.operation_widget import BinConversionWidget
+from batch_operation_tool.uSTEM_conversion.filter_widget import FilterWidget
+from batch_operation_tool.uSTEM_conversion.operation_widget import uSTEMConversionWidget
 
 
-class BinConversionTab(BaseTab):
+class uSTEMConversionTab(BaseTab):
 
-    def __init__(self, fill_tables, name="bin file conversion", parent=None):
+    def __init__(self, fill_tables, name="uSTEM conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
-        super(BinConversionTab, self).__init__(
+        super(uSTEMConversionTab, self).__init__(
             fill_tables=fill_tables, parent=parent)
         self.name = name
 
     def _initUI(self):
         self.filter_widget = FilterWidget(parent=self)
-        self.bin_conversion_widget = BinConversionWidget(get_files_list=self.get_files_lists,
-                                                         parent=self)
+        self.uSTEM_conversion_widget = uSTEMConversionWidget(
+                get_files_list=self.get_files_lists, parent=self)
 
         self.SelectFolderButton = QtWidgets.QPushButton('Select folder', self)
         self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory:', self)
@@ -44,7 +44,7 @@ class BinConversionTab(BaseTab):
         vbox = QtWidgets.QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addWidget(self.filter_widget)
-        vbox.addWidget(self.bin_conversion_widget)
+        vbox.addWidget(self.uSTEM_conversion_widget)
         self.setLayout(vbox)
 
         self._connect_ui()
@@ -52,13 +52,13 @@ class BinConversionTab(BaseTab):
     def _connect_ui(self):
         self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
         self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
-        self.OperationApplyButton.clicked.connect(self._convert)
+        self.OperationApplyButton.clicked.connect(self._convert_files)
         self.LoadConfigButton.clicked.connect(self._load_config_dialog)
         self.SaveConfigButton.clicked.connect(self._save_config_dialog)
 
     def load_config(self, fname=None):
         if fname is None:
-            fname = os.path.join(self._get_library_path(), 'bin_file_conversion',
+            fname = os.path.join(self._get_library_path(), 'uSTEM_conversion',
                                  'default_settings.json')
         with open(fname, "r") as data_file:
             config = json.load(data_file)
@@ -75,13 +75,15 @@ class BinConversionTab(BaseTab):
                                  'default_setting.json')
         config = {'Main': self._get_main_parameters(),
                   'Filter': self.filter_widget.get_parameters(),
-                  'Operation': self.bin_conversion_widget.get_parameters()}
+                  'Operation': self.uSTEM_conversion_widget.get_parameters()}
         with open(fname, 'w') as outfile:
             json.dump(config, outfile)
 
     def set_operation_parameters(self, **params):
-        self.bin_conversion_widget.set_parameters(**params)
+        self.uSTEM_conversion_widget.set_parameters(**params)
 
-    def _convert(self):
-        self.bin_conversion_widget.convert_file()
-        self.refresh_table()
+    def _convert_files(self):
+        self.uSTEM_conversion_widget._setup_conversion()
+        files_list = self.get_files_lists()[0]
+        function = self.uSTEM_conversion_widget.convert_file
+        self.run_threaded_process(files_list, function)

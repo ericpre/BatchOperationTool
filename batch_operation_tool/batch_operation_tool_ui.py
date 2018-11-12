@@ -121,8 +121,8 @@ def get_batch_operation_widget():
     batch_operation_widget.add_tab(TIAConversionTab)
 
     # Add bin conversion tab
-    from batch_operation_tool.bin_file_conversion.bin_conversion_tab import BinConversionTab
-    batch_operation_widget.add_tab(BinConversionTab)
+    from batch_operation_tool.uSTEM_conversion.uSTEM_conversion_tab import uSTEMConversionTab
+    batch_operation_widget.add_tab(uSTEMConversionTab)
 
     # Add copy tab
     from batch_operation_tool.copy.copy_tab import CopyTab

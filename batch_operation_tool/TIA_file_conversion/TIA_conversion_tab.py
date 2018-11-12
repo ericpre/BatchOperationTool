@@ -16,7 +16,7 @@ from batch_operation_tool.TIA_file_conversion.operation_widget import TIAConvers
 
 class TIAConversionTab(BaseTab):
 
-    def __init__(self, fill_tables, name="TIA file conversion", parent=None):
+    def __init__(self, fill_tables, name="TIA/Velox conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
         super(TIAConversionTab, self).__init__(
             fill_tables=fill_tables, parent=parent)

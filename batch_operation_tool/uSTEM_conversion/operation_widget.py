@@ -8,13 +8,13 @@ from qtpy import QtWidgets
 import numpy as np
 import hyperspy.api as hs
 
-from batch_operation_tool.bin_file_conversion.convert_bin import ConvertBin
+from batch_operation_tool.uSTEM_conversion.convert_uSTEM import ConvertuSTEM
 
 
-class BinConversionWidget(QtWidgets.QWidget):
+class uSTEMConversionWidget(QtWidgets.QWidget):
 
     def __init__(self, get_files_list, parent=None):
-        super(BinConversionWidget, self).__init__(parent=parent)
+        super(uSTEMConversionWidget, self).__init__(parent=parent)
 
         self.get_files_list = get_files_list
         self._init_widget()
@@ -22,6 +22,9 @@ class BinConversionWidget(QtWidgets.QWidget):
 
     def _init_widget(self):
         self.operation_groupBox = self._create_operation_groupBox()
+        
+        # TODO: add support for `save_as_stack`, disable it in the mean time
+        self.savestackCheckBox.hide()
 
         vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.operation_groupBox)
@@ -90,22 +93,6 @@ class BinConversionWidget(QtWidgets.QWidget):
         self.parameters['save_stack'] = self.savestackCheckBox.isChecked()
         return self.parameters
 
-    def convert_file(self):
-        param = self.get_parameters()
-        save_stack = param['save_stack']
-        files_list = self.get_files_list()[0]
-        convert_bin = ConvertBin(**param)
-        if save_stack:
-            self._get_keywords_list(files_list)
-        for fname in files_list:
-            convert_bin.read(fname)
-            convert_bin.convert_bin()
-            if save_stack:
-                self._add_data_to_stack(fname, convert_bin.s.data)
-        if save_stack:
-            self._save_stack()
-
-
     def _get_keywords_list(self, files_list):
         """
         Absorption model template:
@@ -168,4 +155,25 @@ class BinConversionWidget(QtWidgets.QWidget):
             s = hs.signals.Signal2D(self.stack_dict[keyword])
             s.save('%s.tif'%keyword)
 
+    def _setup_conversion(self):
+        self.convert_uSTEM = ConvertuSTEM(**self.get_parameters())
 
+    def convert_file(self, fname):
+        # TODO: add support for `save_as_stack`, which means read all images
+        self.convert_uSTEM.read(fname)
+        self.convert_uSTEM.convert()
+
+    # def convert_file(self):
+    #     param = self.get_parameters()
+    #     save_stack = param['save_stack']
+    #     files_list = self.get_files_list()[0]
+    #     convert_bin = ConvertBin(**param)
+    #     if save_stack:
+    #         self._get_keywords_list(files_list)
+    #     for fname in files_list:
+    #         convert_bin.read(fname)
+    #         convert_bin.convert_bin()
+    #         if save_stack:
+    #             self._add_data_to_stack(fname, convert_bin.s.data)
+    #     if save_stack:
+    #         self._save_stack()
