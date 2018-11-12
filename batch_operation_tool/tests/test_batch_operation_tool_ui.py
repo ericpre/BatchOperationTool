@@ -10,7 +10,7 @@ from qtpy import QtWidgets
 
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 from batch_operation_tool.delete.delete_tab import DeleteTab
-from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
+from batch_operation_tool.EMS_conversion.EMS_conversion_tab import EMSConversionTab
 
 class Test_BatchOperationToolUI:
     def setup_method(self):

@@ -72,7 +72,7 @@ class BaseTab(QtWidgets.QWidget):
 
     def _save_config(self, fname=None):
         if fname is None:
-            fname = os.path.join(self._get_library_path(), 'EMS_file_conversion',
+            fname = os.path.join(self._get_library_path(), 'EMS_conversion',
                                  'default_setting.json')
         config = {'Main': self._get_main_parameters(),
                   'Filter': self.filter_widget.get_parameters()}

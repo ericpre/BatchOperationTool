@@ -6,7 +6,7 @@ Created on Sun Dec 20 17:16:09 2015
 """
 from qtpy import QtWidgets
 
-from batch_operation_tool.EMS_file_conversion.ems_reader import EMSReader
+from batch_operation_tool.EMS_conversion.ems_reader import EMSReader
 
 
 class EMSConversionWidget(QtWidgets.QWidget):

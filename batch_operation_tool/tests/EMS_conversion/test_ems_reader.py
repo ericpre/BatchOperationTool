@@ -8,7 +8,7 @@ import os, sys
 import numpy as np
 from qtpy import QtWidgets
 
-from batch_operation_tool.EMS_file_conversion.ems_reader import EMSReader
+from batch_operation_tool.EMS_conversion.ems_reader import EMSReader
 
 class Test_EMS_Reader:  
     @classmethod

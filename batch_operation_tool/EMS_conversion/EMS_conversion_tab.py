@@ -9,13 +9,13 @@ from qtpy import QtWidgets
 import json
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
-from batch_operation_tool.EMS_file_conversion.filter_widget import FilterWidget
-from batch_operation_tool.EMS_file_conversion.operation_widget import EMSConversionWidget
+from batch_operation_tool.EMS_conversion.filter_widget import FilterWidget
+from batch_operation_tool.EMS_conversion.operation_widget import EMSConversionWidget
 
 
 class EMSConversionTab(BaseTab):
 
-    def __init__(self, fill_tables, name="EMS file conversion", parent=None):
+    def __init__(self, fill_tables, name="EMS conversion", parent=None):
         """ Need to pass the fill_tables method from parent class"""
         super(EMSConversionTab, self).__init__(
             fill_tables=fill_tables, parent=parent)
@@ -57,7 +57,7 @@ class EMSConversionTab(BaseTab):
 
     def load_config(self, fname=None):
         if fname is None:
-            fname = os.path.join(self._get_library_path(), 'EMS_file_conversion',
+            fname = os.path.join(self._get_library_path(), 'EMS_conversion',
                                  'default_settings.json')
         with open(fname, "r") as data_file:
             config = json.load(data_file)
@@ -70,7 +70,7 @@ class EMSConversionTab(BaseTab):
 
     def _save_config(self, fname=None):
         if fname is None:
-            fname = os.path.join(self._get_library_path(), 'EMS_file_conversion',
+            fname = os.path.join(self._get_library_path(), 'EMS_conversion',
                                  'default_setting.json')
         config = {'Main': self._get_main_parameters(),
                   'Filter': self.filter_widget.get_parameters(),
@@ -80,10 +80,6 @@ class EMSConversionTab(BaseTab):
 
     def set_operation_parameters(self, **params):
         self.ems_conversion_widget.set_parameters(**params)
-
-    def _convert(self):
-        self.ems_conversion_widget.convert_file()
-        self.refresh_table()
 
     def _convert_files(self):
         self.ems_conversion_widget._setup_conversion()

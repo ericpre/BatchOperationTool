@@ -7,8 +7,8 @@ Created on Sun Dec 27 14:57:30 2015
 import sys
 from qtpy import QtWidgets
 
-from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
-from batch_operation_tool.EMS_file_conversion.operation_widget import EMSConversionWidget  
+from batch_operation_tool.EMS_conversion.EMS_conversion_tab import EMSConversionTab
+from batch_operation_tool.EMS_conversion.operation_widget import EMSConversionWidget  
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
 class Test_EMSConversionWidgets:

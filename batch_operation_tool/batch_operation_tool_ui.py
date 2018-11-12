@@ -113,7 +113,7 @@ def get_batch_operation_widget():
     batch_operation_widget.add_tab(DeleteTab)
 
     # Add EMS conversion tab
-    from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
+    from batch_operation_tool.EMS_conversion.EMS_conversion_tab import EMSConversionTab
     batch_operation_widget.add_tab(EMSConversionTab)
 
     # Add TIA conversion tab

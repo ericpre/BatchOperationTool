@@ -125,7 +125,7 @@ if __name__ == '__main__':
     filepath = __file__
     dirname = os.path.dirname
     path = os.path.join(dirname(dirname(filepath)), 'tests',
-                        'EMS_file_conversion')
+                        'EMS_conversion')
     fname = os.path.join(path, 'BP-1x3x1-slice_y_0001-thickness0.388nm.ems')
     param = {'fname': fname, 'extension_list': ['rpl'], 'overwrite': False,
              'log_to_linear_scale': False, 'data_type': 'image'}

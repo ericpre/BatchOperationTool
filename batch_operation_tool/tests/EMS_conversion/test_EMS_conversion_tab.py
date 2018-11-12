@@ -7,7 +7,7 @@ Created on Sun Dec 27 14:55:06 2015
 import sys, os, json
 from qtpy import QtWidgets
 
-from batch_operation_tool.EMS_file_conversion.EMS_conversion_tab import EMSConversionTab
+from batch_operation_tool.EMS_conversion.EMS_conversion_tab import EMSConversionTab
 from batch_operation_tool.batch_operation_tool_ui import BatchOperationToolUI
 
 from batch_operation_tool.tests.utils_tests import get_dirname_file, merge_two_dicts
