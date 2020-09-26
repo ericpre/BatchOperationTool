@@ -50,8 +50,8 @@ class ConvertTIA:
     def convert_tia(self):
         if isinstance(self.s, list):
             for i, item in enumerate(self.s):
-                suffix = item.metadata.General.title if self.is_velox_emd else i
-                self._convert_tia_single_item(item, '_{}'.format(suffix))
+                suffix = item.metadata.General.title + f"_{i}" if self.is_velox_emd else i
+                self._convert_tia_single_item(item, f'_{suffix}')
         else:
             self._convert_tia_single_item(self.s)
 
@@ -63,8 +63,14 @@ class ConvertTIA:
                 if isinstance(item, hs.signals.Signal1D):
                     return
                 vmin, vmax = contrast_stretching(
-                    item.data, self.saturated_pixels)
+                    item.data,
+                    f"{self.saturated_pixels/2}th",
+                    f'{100-self.saturated_pixels/2}th'
+                    )
                 item.data = self.stretch_contrast(item.data, vmin, vmax)
+                item.data = self.normalise(item.data)
+                item.data *= np.iinfo(np.uint8).max
+                item.change_dtype(np.uint8)
             if extension in ['tif', 'tiff']:
                 if isinstance(item, hs.signals.Signal1D):
                     return
