@@ -15,14 +15,22 @@ class Thread(QtCore.QThread):
 
     def __init__(self, parent, n):
         super().__init__(parent)
+        self.threadactive = True
         self.n = n
 
     def run(self):
         i = 0
         while (i<self.n):
+            if not self.threadactive:
+                break
             time.sleep(0.01)
             i+=1
             self.update.emit()
+            print(i)
+
+    def stop(self):
+        self.threadactive = False
+        self.wait()
 
 
 class ThreadedProgressBar(QtWidgets.QProgressDialog):
@@ -37,6 +45,7 @@ class ThreadedProgressBar(QtWidgets.QProgressDialog):
 
         self.thread.update.connect(self.update)
         self.thread.finished.connect(self.close)
+        self.canceled.connect(self.thread.stop)
 
         self.n = 0
         self.n_percent = 0

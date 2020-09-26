@@ -172,14 +172,22 @@ class ProcessThread(QtCore.QThread):
         self.parent = parent
         self.files_list = files_list
         self.function = function
+        self.threadactive = True
 
     def run(self):
         file_list = self.files_list.copy()
         print(file_list)
         for i, filename in enumerate(self.files_list):
+            if not self.threadactive:
+                print("Processing canceled.")
+                break
             print(f'Process file #{i}: {filename}')
             self.function(filename)
             file_list.remove(filename)
             self.parent.update_table_processed_file(file_list)
             self.update.emit()
         self.finished.emit()
+
+    def stop(self):
+        self.threadactive = False
+        self.wait()
