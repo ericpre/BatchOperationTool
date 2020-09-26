@@ -124,7 +124,7 @@ class BaseTab(QtWidgets.QWidget):
         dname0 = self.dname
         fname = str(QtWidgets.QFileDialog.getOpenFileName(self, directory=dname0,
                                                       filter='*.json')[0])
-        if fname is '':
+        if fname == '':
             return
         else:
             self.load_config(fname=fname)
@@ -133,7 +133,7 @@ class BaseTab(QtWidgets.QWidget):
         dname0 = self.dname
         fname = str(QtWidgets.QFileDialog.getSaveFileName(self, directory=dname0,
                                                       filter='*.json')[0])
-        if fname is '':
+        if fname == '':
             return
         else:
             self._save_config(fname=fname)
@@ -143,7 +143,7 @@ class BaseTab(QtWidgets.QWidget):
         dname = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self, directory=dname0))
-        if dname is '':
+        if dname == '':
             dname = dname0
         self.dname = dname
         self.refresh_table()
@@ -157,7 +157,8 @@ class BaseTab(QtWidgets.QWidget):
 
     def run_threaded_process(self, files_list, function):
         process_thread = ProcessThread(self, files_list, function)
-        progressbarWidget = ThreadedProgressBar(self, process_thread)
+        total = len(process_thread.files_list)
+        progressbarWidget = ThreadedProgressBar(self, process_thread, total)
         progressbarWidget.show()
         progressbarWidget.thread.start()
 
@@ -176,12 +177,9 @@ class ProcessThread(QtCore.QThread):
         file_list = self.files_list.copy()
         print(file_list)
         for i, filename in enumerate(self.files_list):
-            print('Process file #%i: %s' % (i, filename))
-            try:
-                self.function(filename)
-                file_list.remove(filename)
-            except:
-                print('Error with file:', filename)
+            print(f'Process file #{i}: {filename}')
+            self.function(filename)
+            file_list.remove(filename)
             self.parent.update_table_processed_file(file_list)
             self.update.emit()
         self.finished.emit()

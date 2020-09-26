@@ -8,7 +8,7 @@ Created on Thu Nov  1 20:32:45 2018
 
 from qtpy import QtCore, QtWidgets
 import time
- 
+
 class Thread(QtCore.QThread):
 
     update = QtCore.Signal()
@@ -27,27 +27,30 @@ class Thread(QtCore.QThread):
 
 class ThreadedProgressBar(QtWidgets.QProgressDialog):
 
-    def __init__(self, parent, thread): 
+    def __init__(self, parent, thread, total):
         super().__init__(parent)
-        # Set up the user interface from Designer. 
         self.setValue(0)
 
         self.thread = thread
+        self.total = total
+        self.factor = 100 / self.total
 
         self.thread.update.connect(self.update)
         self.thread.finished.connect(self.close)
 
         self.n = 0
+        self.n_percent = 0
 
     def update(self):
         self.n += 1
-        self.setValue(self.n)
+        self.n_percent = self.n * self.factor
+        self.setValue(self.n_percent)
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
-    thread = Thread(parent=None, n=100)
-    progressWidget = ThreadedProgressBar(None, thread)
+    thread = Thread(parent=None, n=500)
+    progressWidget = ThreadedProgressBar(None, thread, total=thread.n)
     progressWidget.move(300, 300)
     progressWidget.show()
     progressWidget.thread.start()
