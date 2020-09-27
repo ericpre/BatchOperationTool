@@ -23,14 +23,18 @@ class BaseTab(QtWidgets.QWidget):
         self._init_main_parameters()
         self.fill_tables = fill_tables
 
-    def _initUI(self):
-        self.filter_widget = FilterWidgetBase(parent=self)
+    def _init_baseUI(self):
 
         self.SelectFolderButton = QtWidgets.QPushButton('Select folder', self)
-        self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory:', self)
+        self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory', self)
         self.OperationApplyButton = QtWidgets.QPushButton('Operation', self)
         self.LoadConfigButton = QtWidgets.QPushButton('Load config', self)
         self.SaveConfigButton = QtWidgets.QPushButton('Save config', self)
+
+        current_folder_label = QtWidgets.QLabel( 'Current folder:', self)
+        self.current_folderLineEdit = QtWidgets.QLineEdit(self)
+
+        self.filter_widget = FilterWidgetBase(parent=self)
 
         # layout
         hbox1 = QtWidgets.QHBoxLayout()
@@ -39,11 +43,24 @@ class BaseTab(QtWidgets.QWidget):
         hbox1.addWidget(self.OperationApplyButton)
         hbox1.addWidget(self.LoadConfigButton)
         hbox1.addWidget(self.SaveConfigButton)
+        # need to combine hbox1 into a single widget
+        hbox1_widget = QtWidgets.QWidget()
+        hbox1_widget.setLayout(hbox1)
 
-        vbox = QtWidgets.QVBoxLayout()
-        vbox.addLayout(hbox1)
-        vbox.addWidget(self.filter_widget)
-        self.setLayout(vbox)
+        hbox2 = QtWidgets.QHBoxLayout()
+        hbox2.addWidget(current_folder_label)
+        hbox2.addWidget(self.current_folderLineEdit)
+        hbox2_widget = QtWidgets.QWidget()
+        hbox2_widget.setLayout(hbox2)
+
+        self.vbox = QtWidgets.QVBoxLayout()
+        self.vbox.addWidget(hbox1_widget)
+        self.vbox.addWidget(hbox2_widget)
+        self.vbox.addWidget(self.filter_widget)
+
+    def _initUI(self):
+        self._init_baseUI()
+        self.setLayout(self.vbox)
         self._connect_ui()
 
     def _connect_ui(self):

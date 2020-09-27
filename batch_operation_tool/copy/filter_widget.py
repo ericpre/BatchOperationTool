@@ -13,7 +13,7 @@ class FilterWidget(FilterWidgetBase):
     """ Handle filters header """
 
     def __init__(self, parent=None):
-        super(FilterWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
     def _init_parameters(self):
         self.parameters = {'string_list': [''],

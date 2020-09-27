@@ -6,11 +6,9 @@ Created on Sat Dec 26 15:02:36 2015
 """
 
 import os
-from qtpy import QtWidgets
 import json
 
 from batch_operation_tool.base_tab.base_tab import BaseTab
-from batch_operation_tool.TIA_file_conversion.filter_widget import FilterWidget
 from batch_operation_tool.TIA_file_conversion.operation_widget import TIAConversionWidget
 
 
@@ -23,38 +21,12 @@ class TIAConversionTab(BaseTab):
         self.name = name
 
     def _initUI(self):
-        self.filter_widget = FilterWidget(parent=self)
+        self._init_baseUI()
         self.tia_conversion_widget = TIAConversionWidget(get_files_list=self.get_files_lists,
                                                          parent=self)
-
-        self.SelectFolderButton = QtWidgets.QPushButton('Select folder', self)
-        self.SubdirectoryCheckBox = QtWidgets.QCheckBox('Subdirectory:', self)
-        self.OperationApplyButton = QtWidgets.QPushButton('Convert', self)
-        self.LoadConfigButton = QtWidgets.QPushButton('Load config', self)
-        self.SaveConfigButton = QtWidgets.QPushButton('Save config', self)
-
-        # layout
-        hbox1 = QtWidgets.QHBoxLayout()
-        hbox1.addWidget(self.SelectFolderButton)
-        hbox1.addWidget(self.SubdirectoryCheckBox)
-        hbox1.addWidget(self.OperationApplyButton)
-        hbox1.addWidget(self.LoadConfigButton)
-        hbox1.addWidget(self.SaveConfigButton)
-
-        vbox = QtWidgets.QVBoxLayout()
-        vbox.addLayout(hbox1)
-        vbox.addWidget(self.filter_widget)
-        vbox.addWidget(self.tia_conversion_widget)
-        self.setLayout(vbox)
-
+        self.vbox.addWidget(self.tia_conversion_widget)
+        self.setLayout(self.vbox)
         self._connect_ui()
-
-    def _connect_ui(self):
-        self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
-        self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
-        self.OperationApplyButton.clicked.connect(self._convert_files)
-        self.LoadConfigButton.clicked.connect(self._load_config_dialog)
-        self.SaveConfigButton.clicked.connect(self._save_config_dialog)
 
     def load_config(self, fname=None):
         if fname is None:

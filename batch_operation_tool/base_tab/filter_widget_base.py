@@ -148,8 +148,8 @@ class FilterWidgetBase(QtWidgets.QWidget):
         self.files_to_use_list = []
         self.files_to_ignore_list = []
         # Get the list of files to delete
-        file_filter = FileFilter(
-            self.dname, self._get_subdirectory(), **self.parameters)
+        file_filter = FileFilter(self.dname, self._get_subdirectory(),
+                                 **self.parameters)
         self.files_to_use_list, self.files_to_ignore_list = file_filter.get_files_lists()
 
     def update_tables(self):

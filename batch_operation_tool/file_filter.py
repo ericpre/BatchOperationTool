@@ -8,7 +8,7 @@ import os
 
 
 class FileFilter():
-    """ 
+    """
     TODO: consider 'ignore_filename_extension_list'
     """
 
