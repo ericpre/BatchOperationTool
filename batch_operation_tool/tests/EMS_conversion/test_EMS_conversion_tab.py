@@ -27,14 +27,16 @@ class Test_EMSConversionTab:
                                   'ignore_string_bool':False,
                                   'ignore_string_list':[''],
                                   'ignore_string_path_bool':False,
-                                  'ignore_string_path_list':['']}
+                                  'ignore_string_path_list':[''],
+                                  'ignore_filename_extension_bool':False,
+                                  'ignore_filename_extension_list': ['']}
         self.main_parameters = {'subdirectory':True,
-                                'directory':os.getcwd()}  
+                                'directory':os.getcwd()}
         self.operation_parameters = {'extension_list':[],
                                      'data_type':'image',
                                      'log_to_linear_scale':True,
                                      'overwrite':False}
-        
+
         self.botui = BatchOperationToolUI(load_settings=None)
         name ='EMS conversion'
         self.botui.add_tab(EMSConversionTab, name=name)
@@ -50,7 +52,7 @@ class Test_EMSConversionTab:
         for key in list(self.operation_parameters.keys()):
             assert self.emsct.ems_conversion_widget.parameters[key] == self.operation_parameters[key]
 
-    def test_load_config(self):       
+    def test_load_config(self):
         config_fname = 'default_settings.json'
         path = get_dirname_file(__file__)
         self.emsct.load_config(os.path.join(path, config_fname))
@@ -68,7 +70,7 @@ class Test_EMSConversionTab:
         assert self.emsct.ems_conversion_widget.parameters['data_type'] == 'image'
         assert self.emsct.ems_conversion_widget.parameters['log_to_linear_scale'] == True
         assert self.emsct.ems_conversion_widget.parameters['overwrite'] == False
-        
+
     def test_save_config(self):
         # setting parameters
         self.emsct._set_main_parameters(**self.main_parameters)
