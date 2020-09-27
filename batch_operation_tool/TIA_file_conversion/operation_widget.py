@@ -28,6 +28,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
     def _init_parameters(self):
         self.parameters = {'extension_list': [],
                            'overwrite': False,
+                           'use_subfolder': True,
                            'contrast_streching': True,
                            'saturated_pixels': 0.4,
                            'normalise': False}
@@ -38,6 +39,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         label1 = QtWidgets.QLabel('Convert to:', self)
         self.extensionconvertionLineEdit = QtWidgets.QLineEdit(self)
         self.overwriteCheckBox = QtWidgets.QCheckBox('Overwrite', self)
+        self.usesubfolderCheckBox = QtWidgets.QCheckBox('Export to subfolder', self)
         self.contraststrechingCheckBox = QtWidgets.QCheckBox(
             'Contrast streching', self)
         self.saturatedpixelsLineEdit = QtWidgets.QLineEdit(self)
@@ -46,24 +48,27 @@ class TIAConversionWidget(QtWidgets.QWidget):
         OperationLayout = QtWidgets.QGridLayout()
         # 1st column
         OperationLayout.addWidget(label1, 0, 0)
-        OperationLayout.addWidget(self.contraststrechingCheckBox, 1, 0)
+        OperationLayout.addWidget(self.usesubfolderCheckBox, 1, 0)
+        OperationLayout.addWidget(self.contraststrechingCheckBox, 2, 0)
         # 2nd column
         OperationLayout.addWidget(self.extensionconvertionLineEdit, 0, 1)
-        OperationLayout.addWidget(self.saturatedpixelsLineEdit, 1, 1)
+        OperationLayout.addWidget(self.saturatedpixelsLineEdit, 2, 1)
         # 3td column
         OperationLayout.addWidget(self.overwriteCheckBox, 0, 2)
-        OperationLayout.addWidget(self.normaliseCheckBox, 1, 2)
+        OperationLayout.addWidget(self.normaliseCheckBox, 2, 2)
         groupBox.setLayout(OperationLayout)
 
         return groupBox
 
     def set_parameters(self, extension_list=None, overwrite=None,
-                       contrast_streching=None, saturated_pixels=None,
-                       normalise=None):
+                       use_subfolder=None, contrast_streching=None,
+                       saturated_pixels=None, normalise=None):
         if extension_list is not None:
             self.extensionconvertionLineEdit.setText(', '.join(extension_list))
         if overwrite is not None:
             self.overwriteCheckBox.setChecked(overwrite)
+        if use_subfolder is not None:
+            self.usesubfolderCheckBox.setChecked(use_subfolder)
         if contrast_streching is not None:
             self.contraststrechingCheckBox.setChecked(contrast_streching)
         if saturated_pixels is not None:
@@ -75,6 +80,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.parameters[
             'extension_list'] = self.extensionconvertionLineEdit.text().split(', ')
         self.parameters['overwrite'] = self.overwriteCheckBox.isChecked()
+        self.parameters['use_subfolder'] = self.usesubfolderCheckBox.isChecked()
         self.parameters[
             'contrast_streching'] = self.contraststrechingCheckBox.isChecked()
         self.parameters['saturated_pixels'] = float(

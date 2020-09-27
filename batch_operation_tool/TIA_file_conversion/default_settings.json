@@ -12,6 +12,7 @@
   "Operation": {
     "extension_list": ["jpg", "tif"],
     "overwrite": false,
+    "use_subfolder": true,
     "contrast_streching": true,
     "saturated_pixels": 0.4,
     "normalise": true

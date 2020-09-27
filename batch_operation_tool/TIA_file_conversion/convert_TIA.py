@@ -5,7 +5,6 @@ Created on Wed Jul 22 11:09:50 2015
 @author: eric
 """
 import os
-import sys
 from qtpy import QtWidgets
 from pint import UnitRegistry
 import traits.api as t
@@ -18,11 +17,12 @@ class ConvertTIA:
     ureg = UnitRegistry()
 
     def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
-                 contrast_streching=False, saturated_pixels=0.4,
-                 normalise=False):
+                 use_subfolder=True, contrast_streching=False,
+                 saturated_pixels=0.4, normalise=False):
         self.fname = fname
         self.extension_list = extension_list
         self.overwrite = overwrite
+        self.use_subfolder = use_subfolder
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
         self.normalisation = normalise
@@ -80,14 +80,17 @@ class ConvertTIA:
                     item.data = self.normalise(item.data)
                     item.data *= np.iinfo(np.int32).max
                     item.change_dtype(np.int32)
-            self.fname_ext = ''.join([os.path.splitext(self.fname)[0], suffix,
-                                      '.', extension])
-            if os.path.exists(self.fname_ext) and self.overwrite is None:
+            dname, fname = os.path.split(self.fname)
+            if self.use_subfolder:
+                dname = os.path.join(dname, extension)
+            fname = os.path.join(dname, os.path.splitext(fname)[0])
+            self.fullfname = f'{fname}{suffix}.{extension}'
+            if os.path.exists(self.fullfname) and self.overwrite is None:
                 write_answer = self._ask_confirmation_overwrite()
                 self._save_data(item, overwrite=write_answer)
             # workaround, currently hyperspy doesn't write file is
             # overwrite=False
-            elif not os.path.exists(self.fname_ext):
+            elif not os.path.exists(self.fullfname):
                 self._save_data(item)
             else:
                 self._save_data(item, overwrite=self.overwrite)
@@ -132,16 +135,15 @@ class ConvertTIA:
                 scale = scale.to(self.ureg('1/um'))
             else:
                 scale = scale.to(self.ureg('1/mm'))
-            return scale.magnitude, '{}'.format(scale.units)
+            return scale.magnitude, f'{scale.units}'
         else:
             print("Units not supported")
-            return scale.magnitude, '{}'.format(scale.units)
+            return scale.magnitude, f'{scale.units}'
 
     def _questionBox(self, fname, path):
         msgBox = QtWidgets.QMessageBox()
         msgBox.setWindowTitle("Overwriting File?")
-        question = "Do you want to overwrite the file\n'%s' \nin the folder '%s'?" % (
-            fname, path)
+        question = f"Do you want to overwrite the file\n'{fname}' \nin the folder '{path}'?"
         msgBox.setText(question)
         msgBox.addButton(QtWidgets.QMessageBox.Yes)
         msgBox.addButton(QtWidgets.QMessageBox.YesToAll)
@@ -151,8 +153,7 @@ class ConvertTIA:
 
     def _ask_confirmation_overwrite(self):
         # Add a button to ask "Yes to all", "No to all"
-        path = os.path.split(self.fname_ext)[0]
-        fname = os.path.split(self.fname_ext)[1]
+        path, fname = os.path.split(self.fullfname)
         questionBox = self._questionBox(fname, path)
         if questionBox == QtWidgets.QMessageBox.Yes:
             self.overwrite = None
@@ -169,11 +170,11 @@ class ConvertTIA:
 
     def _save_data(self, item, overwrite=None, **kwargs):
         try:
-            item.save(self.fname_ext, overwrite=overwrite, **kwargs)
+            item.save(self.fullfname, overwrite=overwrite, **kwargs)
         except IOError:
             # In case the format is not supported, fall back to hspy format
             # Add an option to do that
-            fname = os.path.splitext(self.fname_ext)
+            fname = os.path.splitext(self.fullfname)
             item.save('{}.hspy'.format(fname[0]),
                       overwrite=overwrite, **kwargs)
 
@@ -188,26 +189,6 @@ class ConvertTIA:
         if vmax == None:
             vmax = arr.max()
         return (arr.astype(float) - vmin) / (vmax - vmin)
-
-
-if sys.version_info[0] > 2:
-    str = str, bytes
-    str = str
-
-    def str2bytes(s, encoding="latin-1"):
-        return s.encode(encoding)
-else:
-    def str2bytes(s):
-        return s
-
-
-def imagej_description(version='1.11a', kwargs={}):
-    result = ['ImageJ=%s' % version]
-    append = []
-    for key, value in list(kwargs.items()):
-        append.append('%s=%s' % (key.lower(), value))
-
-    return '\n'.join(result + append + [''])
 
 
 if __name__ == '__main__':
