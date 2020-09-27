@@ -64,6 +64,7 @@ class BaseTab(QtWidgets.QWidget):
         self._connect_ui()
 
     def _connect_ui(self):
+        self.current_folderLineEdit.returnPressed.connect(self._on_valided_current_folder)
         self.SelectFolderButton.clicked.connect(self._open_directory_dialog)
         self.SubdirectoryCheckBox.clicked.connect(self._update_subdirectory)
         self.LoadConfigButton.clicked.connect(self._load_config_dialog)
@@ -112,6 +113,14 @@ class BaseTab(QtWidgets.QWidget):
         self.set_subdirectory(self.SubdirectoryCheckBox.isChecked())
         self.refresh_table()
 
+    def _on_valided_current_folder(self):
+        dname = self.current_folderLineEdit.text()
+        if os.path.exists(dname):
+            self.filter_widget.dname = self.current_folderLineEdit.text()
+            self.refresh_table()
+        else:
+            QtWidgets.QMessageBox.about(self, "Wrong path", "Path doesn't exist.")
+
     def get_files_lists(self):
         self.filter_widget.update_files_lists()
         self.files_to_use_list, self.files_to_ignore_list = self.filter_widget.get_files_lists()
@@ -135,7 +144,8 @@ class BaseTab(QtWidgets.QWidget):
     def dname(self, value):
         if value is not None:
             self.main_parameters['directory'] = os.path.expanduser(value)
-        self.filter_widget.dname = value
+            self.current_folderLineEdit.setText(value)
+            self.filter_widget.dname = value
 
     def _load_config_dialog(self):
         dname0 = self.dname

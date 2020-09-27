@@ -17,6 +17,7 @@ class CopyTab(BaseTab):
 
     def _initUI(self):
         self._init_baseUI()
+        self.OperationApplyButton.setText('Copy')
         self.copy_widget = CopyWidget(get_files_list=self.get_files_lists,
                                       parent=self)
 

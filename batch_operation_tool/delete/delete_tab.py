@@ -18,6 +18,10 @@ class DeleteTab(BaseTab):
 
     def _initUI(self):
         self._init_baseUI()
+        self.OperationApplyButton.setText('Delete')
+
+        self.setLayout(self.vbox)
+
         self._connect_ui()
 
     def _connect_ui(self):

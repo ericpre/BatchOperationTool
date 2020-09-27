@@ -22,6 +22,7 @@ class uSTEMConversionTab(BaseTab):
 
     def _initUI(self):
         self._init_baseUI()
+        self.OperationApplyButton.setText('Convert')
         self.uSTEM_conversion_widget = uSTEMConversionWidget(
                 get_files_list=self.get_files_lists, parent=self)
 

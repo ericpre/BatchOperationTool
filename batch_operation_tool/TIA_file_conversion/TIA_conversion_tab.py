@@ -22,6 +22,7 @@ class TIAConversionTab(BaseTab):
 
     def _initUI(self):
         self._init_baseUI()
+        self.OperationApplyButton.setText('Convert')
         self.tia_conversion_widget = TIAConversionWidget(get_files_list=self.get_files_lists,
                                                          parent=self)
         self.vbox.addWidget(self.tia_conversion_widget)
