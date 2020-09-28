@@ -18,6 +18,7 @@ class Test_ConvertTIA:
         self.parameter = {'fname':'128x128-TEM_search.emi',
                           'extension_list':['jpg'], 'overwrite':False,
                           'use_subfolder': False,
+                          'correct_cfeg_fluctuation': False,
                           'contrast_streching':False, 'saturated_pixels':0.4,
                           'normalise':False}
         self.tia_reader = ConvertTIA(**self.parameter)

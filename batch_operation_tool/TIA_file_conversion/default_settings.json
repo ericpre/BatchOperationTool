@@ -13,6 +13,7 @@
     "extension_list": ["jpg", "tif"],
     "overwrite": false,
     "use_subfolder": true,
+    "correct_cfeg_fluctuation": false,
     "contrast_streching": true,
     "saturated_pixels": 0.4,
     "normalise": true

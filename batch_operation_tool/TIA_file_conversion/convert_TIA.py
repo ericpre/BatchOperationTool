@@ -17,12 +17,14 @@ class ConvertTIA:
     ureg = UnitRegistry()
 
     def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
-                 use_subfolder=True, contrast_streching=False,
+                 use_subfolder=True, correct_cfeg_fluctuation=False,
+                 contrast_streching=False,
                  saturated_pixels=0.4, normalise=False):
         self.fname = fname
         self.extension_list = extension_list
         self.overwrite = overwrite
         self.use_subfolder = use_subfolder
+        self.correct_cfeg_fluctuation = correct_cfeg_fluctuation
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
         self.normalisation = normalise
@@ -56,6 +58,8 @@ class ConvertTIA:
             self._convert_tia_single_item(self.s)
 
     def _convert_tia_single_item(self, item, suffix=''):
+        if self.correct_cfeg_fluctuation:
+            item = correct_intensity(item)
         original_data = item.data.copy()
         for extension in self.extension_list:
             item.data = original_data
@@ -175,8 +179,7 @@ class ConvertTIA:
             # In case the format is not supported, fall back to hspy format
             # Add an option to do that
             fname = os.path.splitext(self.fullfname)
-            item.save('{}.hspy'.format(fname[0]),
-                      overwrite=overwrite, **kwargs)
+            item.save(f'{fname[0]}.hspy', overwrite=overwrite, **kwargs)
 
     def stretch_contrast(self, arr, vmin, vmax):
         arr[np.where(arr<vmin)] = vmin
@@ -189,6 +192,13 @@ class ConvertTIA:
         if vmax == None:
             vmax = arr.max()
         return (arr.astype(float) - vmin) / (vmax - vmin)
+
+
+def correct_intensity(signal, axis=-2):
+    before_mean = signal.data.mean()
+    signal.data = signal.data / signal.mean(axis).data[..., np.newaxis]
+    after_mean = signal.data.mean()
+    return signal * before_mean / after_mean
 
 
 if __name__ == '__main__':

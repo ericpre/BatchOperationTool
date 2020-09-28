@@ -29,6 +29,10 @@ class TIAConversionTab(BaseTab):
         self.setLayout(self.vbox)
         self._connect_ui()
 
+    def _connect_ui(self):
+        super()._connect_ui()
+        self.OperationApplyButton.clicked.connect(self._convert_files)
+
     def load_config(self, fname=None):
         if fname is None:
             fname = os.path.join(self._get_library_path(), 'TIA_file_conversion',
