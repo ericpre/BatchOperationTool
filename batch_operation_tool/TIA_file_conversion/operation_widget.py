@@ -29,6 +29,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.parameters = {'extension_list': [],
                            'overwrite': False,
                            'use_subfolder': True,
+                           'add_scalebar': True,
                            'correct_cfeg_fluctuation': False,
                            'contrast_streching': True,
                            'saturated_pixels': 0.4,
@@ -41,6 +42,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.extensionconvertionLineEdit = QtWidgets.QLineEdit(self)
         self.overwriteCheckBox = QtWidgets.QCheckBox('Overwrite', self)
         self.usesubfolderCheckBox = QtWidgets.QCheckBox('Export to subfolder', self)
+        self.addscalebarCheckBox = QtWidgets.QCheckBox('Add scalebar', self)
         self.correctcfegCheckBox = QtWidgets.QCheckBox('Correct CFEG fluctuation', self)
         self.contraststrechingCheckBox = QtWidgets.QCheckBox(
             'Contrast streching', self)
@@ -50,21 +52,25 @@ class TIAConversionWidget(QtWidgets.QWidget):
         OperationLayout = QtWidgets.QGridLayout()
         # 1st column
         OperationLayout.addWidget(label1, 0, 0)
-        OperationLayout.addWidget(self.usesubfolderCheckBox, 1, 0)
+        OperationLayout.addWidget(self.addscalebarCheckBox, 1, 0)
         OperationLayout.addWidget(self.contraststrechingCheckBox, 2, 0)
         # 2nd column
         OperationLayout.addWidget(self.extensionconvertionLineEdit, 0, 1)
-        OperationLayout.addWidget(self.correctcfegCheckBox, 1, 1)
         OperationLayout.addWidget(self.saturatedpixelsLineEdit, 2, 1)
         # 3td column
-        OperationLayout.addWidget(self.overwriteCheckBox, 0, 2)
+        OperationLayout.addWidget(self.usesubfolderCheckBox, 0, 3)
         OperationLayout.addWidget(self.normaliseCheckBox, 2, 2)
+        # 4th column
+        OperationLayout.addWidget(self.overwriteCheckBox, 0, 2)
+        OperationLayout.addWidget(self.correctcfegCheckBox, 2, 3)
+
         groupBox.setLayout(OperationLayout)
 
         return groupBox
 
     def set_parameters(self, extension_list=None, overwrite=None,
-                       use_subfolder=None, correct_cfeg_fluctuation=None,
+                       use_subfolder=None, add_scalebar=None,
+                       correct_cfeg_fluctuation=None,
                        contrast_streching=None,
                        saturated_pixels=None, normalise=None):
         if extension_list is not None:
@@ -73,6 +79,8 @@ class TIAConversionWidget(QtWidgets.QWidget):
             self.overwriteCheckBox.setChecked(overwrite)
         if use_subfolder is not None:
             self.usesubfolderCheckBox.setChecked(use_subfolder)
+        if add_scalebar is not None:
+            self.addscalebarCheckBox.setChecked(add_scalebar)
         if correct_cfeg_fluctuation is not None:
             self.correctcfegCheckBox.setChecked(correct_cfeg_fluctuation)
         if contrast_streching is not None:
@@ -87,6 +95,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
             'extension_list'] = self.extensionconvertionLineEdit.text().split(', ')
         self.parameters['overwrite'] = self.overwriteCheckBox.isChecked()
         self.parameters['use_subfolder'] = self.usesubfolderCheckBox.isChecked()
+        self.parameters['add_scalebar'] = self.addscalebarCheckBox.isChecked()
         self.parameters['correct_cfeg_fluctuation'] = self.correctcfegCheckBox.isChecked()
         self.parameters[
             'contrast_streching'] = self.contraststrechingCheckBox.isChecked()

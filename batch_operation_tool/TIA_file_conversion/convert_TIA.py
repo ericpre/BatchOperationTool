@@ -18,13 +18,14 @@ class ConvertTIA:
 
     def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
                  use_subfolder=True, correct_cfeg_fluctuation=False,
-                 contrast_streching=False,
+                 add_scalebar=True, contrast_streching=False,
                  saturated_pixels=0.4, normalise=False):
         self.fname = fname
         self.extension_list = extension_list
         self.overwrite = overwrite
         self.use_subfolder = use_subfolder
         self.correct_cfeg_fluctuation = correct_cfeg_fluctuation
+        self.add_scalebar = add_scalebar
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
         self.normalisation = normalise
@@ -172,9 +173,38 @@ class ConvertTIA:
             self.overwrite = None
             return False
 
+    def _save_with_scalebar(self, signal):
+        # upstream this part to hyperspy
+        from matplotlib_scalebar.scalebar import ScaleBar
+        from matplotlib.figure import Figure
+
+        data = signal.data
+        dpi = 100
+        fig = Figure(figsize=[v/dpi for v in data.shape], dpi=dpi)
+        ax = fig.add_axes([0, 0, 1, 1])
+        ax.axis('off')
+        ax.imshow(data, cmap='gray')
+
+        # Add scalebar
+        axes = signal.axes_manager.signal_axes
+        if not isinstance(axes[0].units, str):
+            raise ValueError("Units of the signal axis needs to be of string type.")
+        scalebar = ScaleBar(axes[0].scale, axes[0].units, box_alpha=0.75,
+                            length_fraction=0.4, location='lower left',
+                            font_properties={'size':40})
+        ax.add_artist(scalebar)
+        fig.savefig(self.fullfname, dpi=dpi)
+
     def _save_data(self, item, overwrite=None, **kwargs):
         try:
-            item.save(self.fullfname, overwrite=overwrite, **kwargs)
+            extension = os.path.splitext(self.fullfname)[1]
+            if self.add_scalebar and extension in ['.jpg', '.jpeg']:
+                try:
+                    self._save_with_scalebar(item)
+                except ValueError:
+                    item.save(self.fullfname, overwrite=overwrite, **kwargs)
+            else:
+                item.save(self.fullfname, overwrite=overwrite, **kwargs)
         except IOError:
             # In case the format is not supported, fall back to hspy format
             # Add an option to do that
