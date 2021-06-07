@@ -31,7 +31,7 @@ setup(name = 'Batch operation tool',
       install_requires = ['hyperspy >= 1.6',
                           'pint',
                           'qtpy',
-                          'shortcut'],
+                          'shortcutter'],
       entry_points={
               'gui_scripts': [
                       'BatchOperationToolUI=batch_operation_tool.__main__:main']},

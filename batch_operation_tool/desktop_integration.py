@@ -9,7 +9,7 @@ Created on Thu Nov  1 10:35:57 2018
 
 def add_start_menu_shortcut():
 
-    from shortcut import ShortCutter
+    from shortcutter import ShortCutter
     s = ShortCutter()
     s.create_menu_shortcut("BatchOperationToolUI")
     print('Menu shortcut created.')
