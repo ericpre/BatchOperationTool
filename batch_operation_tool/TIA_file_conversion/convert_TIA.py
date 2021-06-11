@@ -27,7 +27,9 @@ class ConvertTIA:
         self.correct_cfeg_fluctuation = correct_cfeg_fluctuation
         self.add_scalebar = add_scalebar
         if len(output_size[0]) > 0:
-            self.output_size = np.array(output_size, dtype=int)
+            if len(output_size) == 1:
+                output_size = output_size * 2
+            self.output_size = np.array(output_size, dtype=int)[:2]
         else:
             self.output_size = None
         self.contrast_streching = contrast_streching
