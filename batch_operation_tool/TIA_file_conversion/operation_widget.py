@@ -39,7 +39,9 @@ class TIAConversionWidget(QtWidgets.QWidget):
         groupBox = QtWidgets.QGroupBox("TIA file conversion")
 
         label1 = QtWidgets.QLabel('Convert to:', self)
+        label2 = QtWidgets.QLabel('Output size:', self)
         self.extensionconvertionLineEdit = QtWidgets.QLineEdit(self)
+        self.outputsizeLineEdit = QtWidgets.QLineEdit(self)
         self.overwriteCheckBox = QtWidgets.QCheckBox('Overwrite', self)
         self.usesubfolderCheckBox = QtWidgets.QCheckBox('Export to subfolder', self)
         self.addscalebarCheckBox = QtWidgets.QCheckBox('Add scalebar', self)
@@ -52,16 +54,18 @@ class TIAConversionWidget(QtWidgets.QWidget):
         OperationLayout = QtWidgets.QGridLayout()
         # 1st column
         OperationLayout.addWidget(label1, 0, 0)
-        OperationLayout.addWidget(self.addscalebarCheckBox, 1, 0)
+        OperationLayout.addWidget(label2, 1, 0)
         OperationLayout.addWidget(self.contraststrechingCheckBox, 2, 0)
         # 2nd column
         OperationLayout.addWidget(self.extensionconvertionLineEdit, 0, 1)
+        OperationLayout.addWidget(self.outputsizeLineEdit, 1, 1)
         OperationLayout.addWidget(self.saturatedpixelsLineEdit, 2, 1)
         # 3td column
-        OperationLayout.addWidget(self.usesubfolderCheckBox, 0, 3)
+        OperationLayout.addWidget(self.overwriteCheckBox, 0, 2)
+        OperationLayout.addWidget(self.addscalebarCheckBox, 1, 2)
         OperationLayout.addWidget(self.normaliseCheckBox, 2, 2)
         # 4th column
-        OperationLayout.addWidget(self.overwriteCheckBox, 0, 2)
+        OperationLayout.addWidget(self.usesubfolderCheckBox, 0, 3)
         OperationLayout.addWidget(self.correctcfegCheckBox, 2, 3)
 
         groupBox.setLayout(OperationLayout)
@@ -69,7 +73,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         return groupBox
 
     def set_parameters(self, extension_list=None, overwrite=None,
-                       use_subfolder=None, add_scalebar=None,
+                       use_subfolder=None, output_size=None, add_scalebar=None,
                        correct_cfeg_fluctuation=None,
                        contrast_streching=None,
                        saturated_pixels=None, normalise=None):
@@ -81,6 +85,8 @@ class TIAConversionWidget(QtWidgets.QWidget):
             self.usesubfolderCheckBox.setChecked(use_subfolder)
         if add_scalebar is not None:
             self.addscalebarCheckBox.setChecked(add_scalebar)
+        if output_size is not None:
+            self.outputsizeLineEdit.setText(', '.join(output_size))
         if correct_cfeg_fluctuation is not None:
             self.correctcfegCheckBox.setChecked(correct_cfeg_fluctuation)
         if contrast_streching is not None:
@@ -96,6 +102,7 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.parameters['overwrite'] = self.overwriteCheckBox.isChecked()
         self.parameters['use_subfolder'] = self.usesubfolderCheckBox.isChecked()
         self.parameters['add_scalebar'] = self.addscalebarCheckBox.isChecked()
+        self.parameters['output_size'] = self.outputsizeLineEdit.text().split(', ')
         self.parameters['correct_cfeg_fluctuation'] = self.correctcfegCheckBox.isChecked()
         self.parameters[
             'contrast_streching'] = self.contraststrechingCheckBox.isChecked()

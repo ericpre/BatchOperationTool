@@ -18,7 +18,7 @@ class ConvertTIA:
 
     def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
                  use_subfolder=True, correct_cfeg_fluctuation=False,
-                 add_scalebar=True, contrast_streching=False,
+                 add_scalebar=True, output_size=None, contrast_streching=False,
                  saturated_pixels=0.4, normalise=False):
         self.fname = fname
         self.extension_list = extension_list
@@ -26,6 +26,10 @@ class ConvertTIA:
         self.use_subfolder = use_subfolder
         self.correct_cfeg_fluctuation = correct_cfeg_fluctuation
         self.add_scalebar = add_scalebar
+        if len(output_size[0]) > 0:
+            self.output_size = np.array(output_size, dtype=int)
+        else:
+            self.output_size = None
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
         self.normalisation = normalise
@@ -173,14 +177,16 @@ class ConvertTIA:
             self.overwrite = None
             return False
 
-    def _save_with_scalebar(self, signal, axes):
+    def _save_with_scalebar(self, signal, axes, output_size=None):
         # upstream this part to hyperspy
         from matplotlib_scalebar.scalebar import ScaleBar
         from matplotlib.figure import Figure
 
         data = signal.data
         dpi = 100
-        fig = Figure(figsize=[v/dpi for v in data.shape], dpi=dpi)
+        if output_size is None:
+            output_size = [axis.size for axis in axes]
+        fig = Figure(figsize=[size / dpi for size in output_size], dpi=dpi)
         ax = fig.add_axes([0, 0, 1, 1])
         ax.axis('off')
         ax.imshow(data, cmap='gray')
@@ -206,7 +212,7 @@ class ConvertTIA:
                     else:
                         raise ValueError("Data not compatible with saving "
                                          "scale bar.")
-                    self._save_with_scalebar(item, axes)
+                    self._save_with_scalebar(item, axes, self.output_size)
 
                 except ValueError:
                     item.save(self.fullfname, overwrite=overwrite, **kwargs)
