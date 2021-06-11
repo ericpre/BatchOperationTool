@@ -173,7 +173,7 @@ class ConvertTIA:
             self.overwrite = None
             return False
 
-    def _save_with_scalebar(self, signal):
+    def _save_with_scalebar(self, signal, axes):
         # upstream this part to hyperspy
         from matplotlib_scalebar.scalebar import ScaleBar
         from matplotlib.figure import Figure
@@ -185,8 +185,6 @@ class ConvertTIA:
         ax.axis('off')
         ax.imshow(data, cmap='gray')
 
-        # Add scalebar
-        axes = signal.axes_manager.signal_axes
         if not isinstance(axes[0].units, str):
             raise ValueError("Units of the signal axis needs to be of string type.")
         scalebar = ScaleBar(axes[0].scale, axes[0].units, box_alpha=0.75,
@@ -200,7 +198,16 @@ class ConvertTIA:
             extension = os.path.splitext(self.fullfname)[1]
             if self.add_scalebar and extension in ['.jpg', '.jpeg']:
                 try:
-                    self._save_with_scalebar(item)
+                    if len(item.axes_manager.signal_axes) == 2:
+                        axes = item.axes_manager.signal_axes
+                    elif len(item.axes_manager.navigation_axes) == 2:
+                        # Try to use navigation axes
+                        axes = item.axes_manager.navigation_axes
+                    else:
+                        raise ValueError("Data not compatible with saving "
+                                         "scale bar.")
+                    self._save_with_scalebar(item, axes)
+
                 except ValueError:
                     item.save(self.fullfname, overwrite=overwrite, **kwargs)
             else:
