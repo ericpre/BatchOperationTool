@@ -85,7 +85,11 @@ class ConvertTIA:
             if extension in ['tif', 'tiff']:
                 if isinstance(item, hs.signals.Signal1D):
                     return
-                self._set_convenient_scale(item)
+                try:
+                    # TODO: improve this
+                    self._set_convenient_scale(item)
+                except:
+                    pass
                 if self.normalisation:
                     # dirty workaround to read tif file in imagej and dm...
                     item.data = self.normalise(item.data)
@@ -179,13 +183,14 @@ class ConvertTIA:
             self.overwrite = None
             return False
 
-    def _save_with_scalebar(self, signal, axes, output_size=None):
+    def _save_with_scalebar(self, signal, output_size=None):
         # upstream this part to hyperspy
         from matplotlib_scalebar.scalebar import ScaleBar
         from matplotlib.figure import Figure
 
         data = signal.data
         dpi = 100
+        axes = signal.axes_manager.signal_axes
         if output_size is None:
             output_size = [axis.size for axis in axes]
         fig = Figure(figsize=[size / dpi for size in output_size], dpi=dpi)
@@ -204,17 +209,15 @@ class ConvertTIA:
     def _save_data(self, item, overwrite=None, **kwargs):
         try:
             extension = os.path.splitext(self.fullfname)[1]
+            if (item.axes_manager.signal_dimension == 0 and
+                item.axes_manager.navigation_dimension == 2):
+                item = item.T
             if self.add_scalebar and extension in ['.jpg', '.jpeg']:
                 try:
-                    if len(item.axes_manager.signal_axes) == 2:
-                        axes = item.axes_manager.signal_axes
-                    elif len(item.axes_manager.navigation_axes) == 2:
-                        # Try to use navigation axes
-                        axes = item.axes_manager.navigation_axes
-                    else:
+                    if len(item.axes_manager.signal_axes) != 2:
                         raise ValueError("Data not compatible with saving "
                                          "scale bar.")
-                    self._save_with_scalebar(item, axes, self.output_size)
+                    self._save_with_scalebar(item, self.output_size)
 
                 except ValueError:
                     item.save(self.fullfname, overwrite=overwrite, **kwargs)
