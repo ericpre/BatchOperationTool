@@ -185,9 +185,15 @@ class BaseTab(QtWidgets.QWidget):
     def run_threaded_process(self, files_list, function):
         process_thread = ProcessThread(self, files_list, function)
         total = len(process_thread.files_list)
-        progressbarWidget = ThreadedProgressBar(self, process_thread, total)
-        progressbarWidget.show()
-        progressbarWidget.thread.start()
+        if total > 0:
+            progressbarWidget = ThreadedProgressBar(self, process_thread, total)
+            progressbarWidget.show()
+            progressbarWidget.thread.start()
+        else:
+            print("No file to convert.")
+            QtWidgets.QMessageBox.about(
+                self, "Empty file list", "The file list is empty."
+                )
 
 
 class ProcessThread(QtCore.QThread):
