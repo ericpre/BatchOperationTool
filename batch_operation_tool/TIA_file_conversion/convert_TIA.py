@@ -183,41 +183,20 @@ class ConvertTIA:
             self.overwrite = None
             return False
 
-    def _save_with_scalebar(self, signal, output_size=None):
-        # upstream this part to hyperspy
-        from matplotlib_scalebar.scalebar import ScaleBar
-        from matplotlib.figure import Figure
-
-        data = signal.data
-        dpi = 100
-        axes = signal.axes_manager.signal_axes
-        if output_size is None:
-            output_size = [axis.size for axis in axes]
-        fig = Figure(figsize=[size / dpi for size in output_size], dpi=dpi)
-        ax = fig.add_axes([0, 0, 1, 1])
-        ax.axis('off')
-        ax.imshow(data, cmap='gray')
-
-        if not isinstance(axes[0].units, str):
-            raise ValueError("Units of the signal axis needs to be of string type.")
-        scalebar = ScaleBar(axes[0].scale, axes[0].units, box_alpha=0.75,
-                            length_fraction=0.4, location='lower left',
-                            font_properties={'size':40})
-        ax.add_artist(scalebar)
-        fig.savefig(self.fullfname, dpi=dpi)
-
     def _save_data(self, item, overwrite=None, **kwargs):
         try:
             extension = os.path.splitext(self.fullfname)[1]
             if (item.axes_manager.signal_dimension == 0 and
                 item.axes_manager.navigation_dimension == 2):
                 item = item.T
+
             if self.add_scalebar and extension in ['.jpg', '.jpeg']:
                 try:
                     if len(item.axes_manager.signal_axes) != 2:
                         raise ValueError("Data not compatible with saving "
                                          "scale bar.")
-                    self._save_with_scalebar(item, self.output_size)
+                    kwargs = dict(scalebar=True, output_size=self.output_size)
+                    item.save(self.fullfname, overwrite=overwrite, **kwargs)
 
                 except ValueError:
                     item.save(self.fullfname, overwrite=overwrite, **kwargs)
