@@ -52,7 +52,7 @@ class ThreadedProgressBar(QtWidgets.QProgressDialog):
 
     def update(self):
         self.n += 1
-        self.n_percent = self.n * self.factor
+        self.n_percent = int(self.n * self.factor)
         self.setValue(self.n_percent)
 
 
