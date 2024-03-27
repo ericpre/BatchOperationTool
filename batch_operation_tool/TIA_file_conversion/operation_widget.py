@@ -33,7 +33,9 @@ class TIAConversionWidget(QtWidgets.QWidget):
                            'correct_cfeg_fluctuation': False,
                            'contrast_streching': True,
                            'saturated_pixels': 0.4,
-                           'normalise': False}
+                           'normalise': True,
+                           'gamma_correction': False,
+                           'gamma':0.5}
 
     def _create_operation_groupBox(self):
         groupBox = QtWidgets.QGroupBox("TIA file conversion")
@@ -46,9 +48,10 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.usesubfolderCheckBox = QtWidgets.QCheckBox('Export to subfolder', self)
         self.addscalebarCheckBox = QtWidgets.QCheckBox('Add scalebar', self)
         self.correctcfegCheckBox = QtWidgets.QCheckBox('Correct CFEG fluctuation', self)
-        self.contraststrechingCheckBox = QtWidgets.QCheckBox(
-            'Contrast streching', self)
+        self.contraststrechingCheckBox = QtWidgets.QCheckBox('Contrast streching', self)
         self.saturatedpixelsLineEdit = QtWidgets.QLineEdit(self)
+        self.gammacorrectionCheckBox = QtWidgets.QCheckBox('Gamma Correction', self)
+        self.gammaLineEdit = QtWidgets.QLineEdit(self)
         self.normaliseCheckBox = QtWidgets.QCheckBox('Normalise', self)
 
         OperationLayout = QtWidgets.QGridLayout()
@@ -56,10 +59,12 @@ class TIAConversionWidget(QtWidgets.QWidget):
         OperationLayout.addWidget(label1, 0, 0)
         OperationLayout.addWidget(label2, 1, 0)
         OperationLayout.addWidget(self.contraststrechingCheckBox, 2, 0)
+        OperationLayout.addWidget(self.gammacorrectionCheckBox, 3, 0)
         # 2nd column
         OperationLayout.addWidget(self.extensionconvertionLineEdit, 0, 1)
         OperationLayout.addWidget(self.outputsizeLineEdit, 1, 1)
         OperationLayout.addWidget(self.saturatedpixelsLineEdit, 2, 1)
+        OperationLayout.addWidget(self.gammaLineEdit, 3, 1)
         # 3td column
         OperationLayout.addWidget(self.overwriteCheckBox, 0, 2)
         OperationLayout.addWidget(self.addscalebarCheckBox, 1, 2)
@@ -76,7 +81,8 @@ class TIAConversionWidget(QtWidgets.QWidget):
                        use_subfolder=None, output_size=None, add_scalebar=None,
                        correct_cfeg_fluctuation=None,
                        contrast_streching=None,
-                       saturated_pixels=None, normalise=None):
+                       saturated_pixels=None, normalise=None,
+                       gamma_correction=None, gamma=None):
         if extension_list is not None:
             self.extensionconvertionLineEdit.setText(', '.join(extension_list))
         if overwrite is not None:
@@ -95,6 +101,10 @@ class TIAConversionWidget(QtWidgets.QWidget):
             self.saturatedpixelsLineEdit.setText(str(saturated_pixels))
         if normalise is not None:
             self.normaliseCheckBox.setChecked(normalise)
+        if gamma_correction:
+            self.gammacorrectionCheckBox.setChecked(gamma_correction)
+        if gamma:
+            self.gammaLineEdit.setText(str(gamma))
 
     def get_parameters(self):
         self.parameters[
@@ -109,6 +119,9 @@ class TIAConversionWidget(QtWidgets.QWidget):
         self.parameters['saturated_pixels'] = float(
             self.saturatedpixelsLineEdit.text())
         self.parameters['normalise'] = self.normaliseCheckBox.isChecked()
+        self.parameters[
+            'gamma_correction'] = self.gammacorrectionCheckBox.isChecked()
+        self.parameters['gamma'] = float(self.gammaLineEdit.text())
         return self.parameters
 
     def _setup_conversion(self):

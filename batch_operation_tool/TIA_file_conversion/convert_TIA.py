@@ -5,12 +5,14 @@ Created on Wed Jul 22 11:09:50 2015
 @author: eric
 """
 import os
+
 from qtpy import QtWidgets
 from pint import UnitRegistry
 import traits.api as t
 import numpy as np
 import hyperspy.api as hs
 from hyperspy.drawing.utils import contrast_stretching
+import skimage as ski
 
 
 class ConvertTIA:
@@ -19,22 +21,27 @@ class ConvertTIA:
     def __init__(self, fname=None, extension_list=['tif'], overwrite=None,
                  use_subfolder=True, correct_cfeg_fluctuation=False,
                  add_scalebar=True, output_size=None, contrast_streching=False,
-                 saturated_pixels=0.4, normalise=False):
+                 saturated_pixels=0.4, normalise=False, gamma=False,
+                 gamma_correction=0.5):
         self.fname = fname
         self.extension_list = extension_list
         self.overwrite = overwrite
         self.use_subfolder = use_subfolder
         self.correct_cfeg_fluctuation = correct_cfeg_fluctuation
         self.add_scalebar = add_scalebar
-        if len(output_size[0]) > 0:
-            if len(output_size) == 1:
-                output_size = output_size * 2
-            self.output_size = np.array(output_size, dtype=int)[:2]
-        else:
-            self.output_size = None
+        if output_size is not None:
+            output_size = [s for s in output_size if len(s)]
+            if output_size:
+                if len(output_size) == 1:
+                    output_size = int(output_size[0])
+                else:
+                    output_size = np.array(output_size, dtype=int)
+        self.output_size = output_size if np.any(output_size) else None
         self.contrast_streching = contrast_streching
         self.saturated_pixels = saturated_pixels
         self.normalisation = normalise
+        self.gamma_correction = gamma_correction
+        self.gamma= gamma
         # to ask to overwrite the first time when the checkBox is unchecked
         if not overwrite:
             self.overwrite = None
@@ -70,18 +77,21 @@ class ConvertTIA:
         original_data = item.data.copy()
         for extension in self.extension_list:
             item.data = original_data
-            if extension in ['jpg', 'jpeg'] and self.contrast_streching:
-                if isinstance(item, hs.signals.Signal1D):
+            if extension in ['jpg', 'jpeg']:
+                is_rgbx = item.is_rgbx
+                if is_rgbx:
+                    item.change_dtype(item.data.dtype[0])
+                elif isinstance(item, hs.signals.Signal1D):
                     return
-                vmin, vmax = contrast_stretching(
-                    item.data,
-                    f"{self.saturated_pixels/2}th",
-                    f'{100-self.saturated_pixels/2}th'
-                    )
-                item.data = self.stretch_contrast(item.data, vmin, vmax)
+                if self.gamma_correction:
+                    item.data = self.apply_gamma_correction(item.data)
+                if self.contrast_streching:
+                    item.data = self.stretch_contrast(item.data)
                 item.data = self.normalise(item.data)
                 item.data *= np.iinfo(np.uint8).max
                 item.change_dtype(np.uint8)
+                if is_rgbx:
+                    item.change_dtype("rgb8")
             if extension in ['tif', 'tiff']:
                 if isinstance(item, hs.signals.Signal1D):
                     return
@@ -96,7 +106,9 @@ class ConvertTIA:
                     item.data *= np.iinfo(np.int32).max
                     item.change_dtype(np.int32)
             dname, fname = os.path.split(self.fname)
-            if self.use_subfolder:
+            if self.use_subfolder and self.add_scalebar:
+                dname = os.path.join(dname, extension + "-scalebar")
+            elif self.use_subfolder:
                 dname = os.path.join(dname, extension)
             fname = os.path.join(dname, os.path.splitext(fname)[0])
             self.fullfname = f'{fname}{suffix}.{extension}'
@@ -164,7 +176,7 @@ class ConvertTIA:
         msgBox.addButton(QtWidgets.QMessageBox.YesToAll)
         msgBox.addButton(QtWidgets.QMessageBox.No)
         msgBox.addButton(QtWidgets.QMessageBox.NoToAll)
-        return msgBox.exec_()
+        return msgBox.exec()
 
     def _ask_confirmation_overwrite(self):
         # Add a button to ask "Yes to all", "No to all"
@@ -190,12 +202,15 @@ class ConvertTIA:
                 item.axes_manager.navigation_dimension == 2):
                 item = item.T
 
-            if self.add_scalebar and extension in ['.jpg', '.jpeg']:
+            if ((self.add_scalebar or np.any(self.output_size) is not None) and
+                extension in ['.jpg', '.jpeg']):
                 try:
                     if len(item.axes_manager.signal_axes) != 2:
                         raise ValueError("Data not compatible with saving "
                                          "scale bar.")
-                    kwargs = dict(scalebar=True, output_size=self.output_size)
+                    kwargs = dict(
+                        scalebar=self.add_scalebar, output_size=self.output_size
+                        )
                     item.save(self.fullfname, overwrite=overwrite, **kwargs)
 
                 except ValueError:
@@ -208,10 +223,17 @@ class ConvertTIA:
             fname = os.path.splitext(self.fullfname)
             item.save(f'{fname[0]}.hspy', overwrite=overwrite, **kwargs)
 
-    def stretch_contrast(self, arr, vmin, vmax):
+    def stretch_contrast(self, arr):
+        saturation = self.saturated_pixels
+        vmin, vmax = contrast_stretching(
+            arr, f"{saturation/2}th", f'{100-saturation/2}th'
+            )
         arr[np.where(arr<vmin)] = vmin
         arr[np.where(arr>vmax)] = vmax
         return arr
+
+    def apply_gamma_correction(self, arr):
+        return ski.exposure.adjust_gamma(arr, gamma=self.gamma)
 
     def normalise(self, arr, vmin=None, vmax=None):
         if vmin == None:

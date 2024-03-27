@@ -18,7 +18,9 @@
     "correct_cfeg_fluctuation": false,
     "contrast_streching": true,
     "saturated_pixels": 0.4,
-    "normalise": true
+    "normalise": true,
+    "gamma_correction": false,
+    "gamma": 0.5
   },
   "Main": {
     "directory": "~",
